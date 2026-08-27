@@ -62,6 +62,26 @@ def thai_date(iso_date):
     return f"{d.day} {THAI_MONTHS[d.month]} {d.year + 543}"
 
 
+MONTH_TO_NUM = {m: i for i, m in enumerate(THAI_MONTHS) if m}
+DATE_TEXT_RE = re.compile(r"(\d{1,2})\s+(\S+)\s+(\d{4})")
+
+
+def parse_thai_date_text(date_text):
+    """'จ. 17 ส.ค. 2569' -> '2026-08-17' (Buddhist year, Thai month abbrev)."""
+    m = DATE_TEXT_RE.search(date_text or "")
+    if not m:
+        return None
+    day, month_th, year_be = m.groups()
+    month = MONTH_TO_NUM.get(month_th)
+    if not month:
+        return None
+    try:
+        d = datetime(int(year_be) - 543, month, int(day))
+    except ValueError:
+        return None
+    return d.strftime("%Y-%m-%d")
+
+
 def split_row(line):
     parts = line.strip().split("|")
     return [p.strip() for p in parts[1:-1]]
@@ -174,7 +194,12 @@ def group_by_day(sessions):
     days = []
     for s in sessions:
         if not days or days[-1]["date_text"] != s["date_text"]:
-            days.append({"date_text": s["date_text"], "week": s["week"], "sessions": []})
+            days.append({
+                "date_text": s["date_text"],
+                "week": s["week"],
+                "date_iso": parse_thai_date_text(s["date_text"]),
+                "sessions": [],
+            })
         days[-1]["sessions"].append(s)
     return days
 
@@ -209,7 +234,8 @@ def render_day(day, prev_week):
     if day["week"] and day["week"] != prev_week:
         week_html = f'<div class="week-div">{esc(day["week"])}</div>'
     rows_html = "\n".join(render_session_row(s) for s in day["sessions"])
-    return week_html + f"""<section class="day">
+    date_attr = f' data-date="{esc(day["date_iso"])}"' if day.get("date_iso") else ""
+    return week_html + f"""<section class="day"{date_attr}>
   <div class="day-head">{esc(day["date_text"])}</div>
   {rows_html}
 </section>"""
@@ -260,6 +286,9 @@ CSS = """
   --clinical-light: #e6f7f1;
   --sitevisit: #d97706;
   --sitevisit-light: #fdf2e2;
+  --today: #b45309;
+  --today-light: #fef3e0;
+  --today-text: #92400e;
 }
 * { box-sizing: border-box; }
 html { font-size: 15px; }
@@ -305,9 +334,40 @@ header.course-header .period { font-size: .76rem; color: var(--muted); margin-to
   border: 1px solid var(--border);
 }
 
+.day.today {
+  border-left: 3px solid var(--today);
+  background: var(--today-light);
+  border-radius: 6px;
+  padding: 2px 0 4px 6px;
+  margin-left: -6px;
+}
+.day.today .day-head {
+  background: var(--today-light);
+  border-color: var(--today);
+  color: var(--today-text);
+  position: sticky; top: 0;
+}
+.today-badge {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: .64rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--today);
+  padding: 1px 7px;
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
 .row {
-  display: flex; flex-wrap: wrap; align-items: baseline;
-  gap: 2px 8px;
+  display: grid;
+  grid-template-columns: 5em 1fr auto;
+  grid-template-areas:
+    "time topic pill"
+    ".    who   who";
+  column-gap: 8px;
+  row-gap: 1px;
+  align-items: baseline;
   padding: 5px 8px;
   border-bottom: 1px solid var(--border);
   font-size: .82rem;
@@ -315,12 +375,12 @@ header.course-header .period { font-size: .76rem; color: var(--muted); margin-to
 .row:last-child { border-bottom: none; }
 
 .row .time {
-  flex: 0 0 auto;
-  width: 5.2em;
+  grid-area: time;
   font-weight: 600;
   color: var(--primary);
   font-variant-numeric: tabular-nums;
   font-size: .76rem;
+  white-space: nowrap;
 }
 .row .unit {
   font-size: .68rem;
@@ -330,11 +390,12 @@ header.course-header .period { font-size: .76rem; color: var(--muted); margin-to
   padding: 1px 4px;
   margin-right: 4px;
 }
-.row .topic { flex: 1 1 220px; }
-.row .who { flex: 0 1 auto; font-size: .74rem; color: var(--muted); }
+.row .topic { grid-area: topic; min-width: 0; }
+.row .who { grid-area: who; font-size: .74rem; color: var(--muted); min-width: 0; }
 .row .pill {
-  flex: 0 0 auto;
-  margin-left: auto;
+  grid-area: pill;
+  justify-self: end;
+  align-self: start;
   font-size: .68rem;
   font-weight: 600;
   padding: 2px 7px;
@@ -374,11 +435,56 @@ footer.page-footer {
 
 @media (max-width: 480px) {
   html { font-size: 14px; }
-  .row .topic { flex-basis: 100%; order: 3; }
-  .row .who { flex-basis: 100%; order: 4; }
-  .row .time { order: 1; }
-  .row .pill { order: 2; }
+  .row { grid-template-columns: 4.4em 1fr auto; column-gap: 6px; }
 }
+"""
+
+JS = """
+(function () {
+  var days = Array.prototype.slice.call(document.querySelectorAll('.day[data-date]'));
+  if (!days.length) return;
+
+  var now = new Date();
+  var todayStr = now.getFullYear() + '-' +
+    String(now.getMonth() + 1).padStart(2, '0') + '-' +
+    String(now.getDate()).padStart(2, '0');
+
+  var first = days[0].getAttribute('data-date');
+  var last = days[days.length - 1].getAttribute('data-date');
+
+  var target, doHighlight;
+  if (todayStr < first) {
+    target = days[0];
+    doHighlight = false;
+  } else if (todayStr > last) {
+    target = days[days.length - 1];
+    doHighlight = false;
+  } else {
+    var exact = null, upcoming = null;
+    days.forEach(function (sec) {
+      var d = sec.getAttribute('data-date');
+      if (d === todayStr) exact = sec;
+      if (!upcoming && d >= todayStr) upcoming = sec;
+    });
+    target = exact || upcoming || days[days.length - 1];
+    doHighlight = true;
+  }
+
+  if (doHighlight && target) {
+    target.classList.add('today');
+    var head = target.querySelector('.day-head');
+    if (head && !head.querySelector('.today-badge')) {
+      var badge = document.createElement('span');
+      badge.className = 'today-badge';
+      badge.textContent = 'วันนี้';
+      head.appendChild(badge);
+    }
+  }
+
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+})();
 """
 
 
@@ -433,6 +539,7 @@ def build_html(course, sessions, homework, notes):
       สร้างจากไฟล์ schedule.md (ฉบับตรวจทานล่าสุด) — ใช้เพื่ออ้างอิงเท่านั้น กรุณาตรวจสอบประกาศทางการอีกครั้ง
     </footer>
   </div>
+  <script>{JS}</script>
 </body>
 </html>
 """
