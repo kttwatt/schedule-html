@@ -1,0 +1,3228 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>นโยบายสุขภาพกับภาวะผู้นำ (พยคร 627)</title>
+<style>
+:root {
+  --bg: #f5f7fb;
+  --card-bg: #ffffff;
+  --text: #1f2530;
+  --muted: #6b7280;
+  --border: #e5e9f0;
+  --primary: #2563eb;
+  --primary-light: #eaf1fe;
+  --exam: #dc2626;
+  --exam-light: #fdecec;
+  --hybrid: #7c3aed;
+  --hybrid-light: #f1ebfe;
+  --selfstudy: #6b7280;
+  --selfstudy-light: #f0f1f3;
+  --clinical: #059669;
+  --clinical-light: #e6f7f1;
+  --sitevisit: #d97706;
+  --sitevisit-light: #fdf2e2;
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Noto Sans Thai", "Sarabun", "TH Sarabun New", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", system-ui, sans-serif;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 20px 16px 64px;
+}
+
+header.course-header {
+  background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.25);
+}
+
+header.course-header .code {
+  font-size: 0.9rem;
+  opacity: 0.85;
+  letter-spacing: 0.02em;
+  margin-bottom: 4px;
+}
+
+header.course-header h1 {
+  margin: 0 0 10px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+header.course-header .program {
+  font-size: 0.92rem;
+  opacity: 0.92;
+  margin-bottom: 4px;
+}
+
+header.course-header .period {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.legend {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: center;
+}
+
+.legend .legend-title {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-right: 4px;
+}
+
+.week {
+  margin-bottom: 30px;
+}
+
+.week-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 8px;
+  margin: 0 0 14px;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 1;
+  padding-top: 6px;
+}
+
+.week-label { color: var(--primary); }
+
+.week-range {
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.sessions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.session {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: flex;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.session-exam {
+  border-left-color: var(--exam);
+  background: var(--exam-light);
+}
+
+.session-muted {
+  border-left-color: var(--selfstudy);
+  background: #fafafa;
+}
+
+.session-nodata {
+  border-left-color: var(--border);
+  border-style: dashed;
+  opacity: 0.75;
+}
+
+.session-time {
+  flex: 0 0 92px;
+  text-align: center;
+  padding-top: 2px;
+}
+
+.session-time .day {
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.session-time .date {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.session-time .time {
+  margin-top: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--primary);
+  background: var(--primary-light);
+  border-radius: 8px;
+  padding: 3px 6px;
+}
+
+.session-exam .session-time .time {
+  color: var(--exam);
+  background: #fbdada;
+}
+
+.session-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.session-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.topic {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  flex: 1 1 auto;
+  min-width: 180px;
+}
+
+.session-exam .topic { color: var(--exam); }
+
+.badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.unit-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #eef2f7;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.fmt-onsite    { background: var(--primary-light); color: var(--primary); }
+.fmt-hybrid    { background: var(--hybrid-light);   color: var(--hybrid); }
+.fmt-selfstudy { background: var(--selfstudy-light);color: var(--selfstudy); }
+.fmt-exam      { background: #fbdada;               color: var(--exam); }
+.fmt-clinical  { background: var(--clinical-light); color: var(--clinical); }
+.fmt-sitevisit { background: var(--sitevisit-light);color: var(--sitevisit); }
+
+.lecturers {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.lecturers li::before { content: "👤 "; }
+.lecturers li { margin-top: 2px; }
+
+.meta-row {
+  margin-top: 6px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.moved {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--sitevisit);
+  background: var(--sitevisit-light);
+  border-radius: 8px;
+  padding: 5px 9px;
+  display: inline-block;
+}
+
+.notes {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.summary {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--clinical);
+}
+
+.materials {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  font-size: 0.8rem;
+}
+
+.materials li::before { content: "📎 "; }
+.materials a {
+  color: var(--primary);
+  text-decoration: none;
+}
+.materials a:hover { text-decoration: underline; }
+
+footer.page-footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.78rem;
+  margin-top: 30px;
+}
+
+@media (max-width: 560px) {
+  .session { flex-direction: column; gap: 6px; }
+  .session-time {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 0;
+    flex: none;
+  }
+  .session-time .date { margin-top: 0; }
+  header.course-header h1 { font-size: 1.25rem; }
+  .week-header { font-size: 1.02rem; }
+}
+</style>
+</head>
+<body>
+  <div class="container">
+    <header class="course-header">
+      <div class="code">พยคร 627</div>
+      <h1>นโยบายสุขภาพกับภาวะผู้นำ</h1>
+      <div class="program">หลักสูตรการพยาบาลเฉพาะทาง รุ่นที่ 55 กลุ่มที่ 1 (สาขาการพยาบาลปริศัลยกรรม)</div>
+      <div class="period">📅 17 ส.ค. 2569 – 4 ธ.ค. 2569</div>
+    </header>
+
+    <div class="legend">
+      <span class="legend-title">คำอธิบายสัญลักษณ์:</span>
+      <span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span><span class="pill fmt-hybrid">ไฮบริด (Hybrid)</span><span class="pill fmt-selfstudy">ศึกษาด้วยตนเอง (Self-study)</span><span class="pill fmt-exam">สอบ (Exam)</span><span class="pill fmt-clinical">ฝึกปฏิบัติ (Clinical)</span><span class="pill fmt-sitevisit">ดูงาน (Site visit)</span>
+    </div>
+
+    <main>
+      
+    <section class="week">
+      <h2 class="week-header"><span class="week-label">สัปดาห์ที่ 1</span><span class="week-range">17 ส.ค. 2569 – 21 ส.ค. 2569</span></h2>
+      <div class="sessions">
+        
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">17 ส.ค. 2569</div>
+          <div class="time">09:00 – 10:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">การปฐมนิเทศหลักสูตรฯ</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>อาจารย์ประจำสาขา</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          <ul class="materials"><li><a href="materials/leadership/orientation-627.pdf">orientation-627.pdf</a></li></ul>
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">17 ส.ค. 2569</div>
+          <div class="time">10:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">แนะนำคณะกรรมการประจำหลักสูตรและแนะนำการศึกษาอบรม / กิจกรรมสัมพันธ์ประจำสาขา</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ศ.ดร. อุษาวดี อัศดรวิเศษ (อาจารย์ประจำสาขา)</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          <ul class="materials"><li><a href="materials/leadership/orientation-627.pdf">orientation-627.pdf</a></li></ul>
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">17 ส.ค. 2569</div>
+          <div class="time">13:00 – 14:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">แนะนำระบบสารสนเทศเพื่อการเรียนการสอน</h3>
+            <div class="badges"><span class="pill fmt-hybrid">ไฮบริด (Hybrid)</span></div>
+          </div>
+          <ul class="lecturers"><li>นายมารุต คล่องแคล่ว (งานเทคโนโลยีสารสนเทศ)</li></ul>
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">17 ส.ค. 2569</div>
+          <div class="time">14:00 – 15:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">แนะนำการใช้ห้องสมุดคณะพยาบาลศาสตร์</h3>
+            <div class="badges"><span class="pill fmt-hybrid">ไฮบริด (Hybrid)</span></div>
+          </div>
+          <ul class="lecturers"><li>นางสาวนิภาพร เดชะ (งานห้องสมุด)</li></ul>
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">18 ส.ค. 2569</div>
+          <div class="time">09:00 – 10:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">ปฐมนิเทศวิชา พยคร 627 นโยบายสุขภาพกับภาวะผู้นำ</h3>
+            <div class="badges"><span class="pill fmt-hybrid">ไฮบริด (Hybrid)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.ดร.เกศศิริ วงษ์คงคำ (หัวหน้าวิชา/ภาควิชาการพยาบาลศัลยศาสตร์)</li></ul>
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">18 ส.ค. 2569</div>
+          <div class="time">10:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">แนวคิด หลักการ และกระบวนการพัฒนาภาวะผู้นำทางการพยาบาล / การใช้หลักฐานเชิงประจักษ์ในกระบวนการดูแลอย่างต่อเนื่อง</h3>
+            <div class="badges"><span class="unit-badge">หน่วยที่ 2</span><span class="pill fmt-hybrid">ไฮบริด (Hybrid)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.ดร.เกศศิริ วงษ์คงคำ (หัวหน้าวิชา/ภาควิชาการพยาบาลศัลยศาสตร์)</li></ul>
+          
+          
+          
+          <div class="summary">📝 lecture-notes/2026-08-18-unit2-ebp.md</div>
+          <ul class="materials"><li><a href="materials/leadership/EBP-OR-Rehab.pdf">EBP-OR-Rehab.pdf</a></li></ul>
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">18 ส.ค. 2569</div>
+          <div class="time">13:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">ระบบสุขภาพ นโยบายสุขภาพของประเทศ แผนพัฒนาสุขภาพแห่งชาติ ฉบับปัจจุบัน</h3>
+            <div class="badges"><span class="unit-badge">หน่วยที่ 1</span><span class="pill fmt-hybrid">ไฮบริด (Hybrid)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.ดร.ฐิติพงษ์ ตันคำปวน (รองคณบดีฝ่ายวิจัย)</li><li>อ.ดร.สุรัสวดี เครือหงส์ (ภาควิชาการพยาบาลศัลยศาสตร์)</li><li>อ.ดร.ชิดชนก เบ็ญจสิริสรรค์ (ภาควิชาการพยาบาลอายุรศาสตร์)</li></ul>
+          
+          
+          
+          <div class="summary">📝 lecture-notes/2026-08-18-unit1-health-policy.md</div>
+          <ul class="materials"><li><a href="materials/unit1-policy-slides.pdf">unit1-policy-slides.pdf</a></li><li><a href="materials/unit1-health-policy.pdf">unit1-health-policy.pdf</a></li><li><a href="materials/rubric-takehome-exam.docx">rubric-takehome-exam.docx</a></li></ul>
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">19 ส.ค. 2569</div>
+          <div class="time">08:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">ทฤษฎีและแนวคิดเกี่ยวกับผู้นำ: ความหมายและแนวคิดเกี่ยวกับผู้นำ / ทฤษฎีผู้นำ (leadership theories) / พฤติกรรมและกลยุทธ์ของผู้นำทางการพยาบาลในระบบสุขภาพ: ผู้นำกับการพัฒนาองค์กรด้วยระบบประกันคุณภาพและการบริหารความเสี่ยง</h3>
+            <div class="badges"><span class="unit-badge">หน่วยที่ 2</span><span class="pill fmt-hybrid">ไฮบริด (Hybrid)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.ดร.รัตติมา ศิริโหราชัย (หัวหน้าภาควิชาการพยาบาลศัลยศาสตร์)</li></ul>
+          
+          
+          
+          <div class="summary">📝 lecture-notes/2026-08-19-unit2-leadership.md; lecture-notes/2026-08-19-quality-safety-issues.md</div>
+          <ul class="materials"><li><a href="materials/leadership/Leadership-Theory-2026.pdf">Leadership-Theory-2026.pdf</a></li><li><a href="materials/leadership/Quality-and-Safety-2026.pdf">Quality-and-Safety-2026.pdf</a></li></ul>
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">19 ส.ค. 2569</div>
+          <div class="time">13:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">จริยธรรมของผู้นำทางการพยาบาลและกฎหมายวิชาชีพการพยาบาลและการผดุงครรภ์ที่เกี่ยวข้อง</h3>
+            <div class="badges"><span class="unit-badge">หน่วยที่ 2</span><span class="pill fmt-hybrid">ไฮบริด (Hybrid)</span></div>
+          </div>
+          <ul class="lecturers"><li>รศ.ดร.ปรางทิพย์ ฉายพุทธ (เกษียณอายุราชการ)</li></ul>
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">20 ส.ค. 2569</div>
+          <div class="time">09:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">แผนยุทธศาสตร์กำลังคนด้านสุขภาพ และปัญหากำลังคนสาขาพยาบาลศาสตร์</h3>
+            <div class="badges"><span class="unit-badge">หน่วยที่ 1</span><span class="pill fmt-hybrid">ไฮบริด (Hybrid)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.ดร.ฐิติพงษ์ ตันคำปวน (รองคณบดีฝ่ายวิจัย)</li><li>อ.ดร.สุรัสวดี เครือหงส์ (ภาควิชาการพยาบาลศัลยศาสตร์)</li><li>อ.ดร.ชิดชนก เบ็ญจสิริสรรค์ (ภาควิชาการพยาบาลอายุรศาสตร์)</li></ul>
+          
+          
+          
+          <div class="summary">📝 lecture-notes/2026-08-20-unit1-workforce.md; lecture-notes/workforce-workshop-prep.md</div>
+          <ul class="materials"><li><a href="materials/Lecture_Workforce_August2026.pdf">Lecture_Workforce_August2026.pdf</a></li><li><a href="materials/กลุ่ม Policy+Workforce_เฉพาะทางสาขาการพยาบาลปริศัลยกรรม 55 ก1.md">กลุ่ม Policy+Workforce_เฉพาะทางสาขาการพยาบาลปริศัลยกรรม 55 ก1.md</a></li><li><a href="materials/Workshop_Workforce_August2026.md">Workshop_Workforce_August2026.md</a></li></ul>
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">20 ส.ค. 2569</div>
+          <div class="time">13:00 – 17:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">การพัฒนาสมรรถนะผู้นำ พฤติกรรม กลยุทธ์ของผู้นำทางการพยาบาลในระบบสุขภาพ การสื่อสาร การสร้างและกระบวนการทำงานเป็นทีม</h3>
+            <div class="badges"><span class="unit-badge">หน่วยที่ 2</span><span class="pill fmt-hybrid">ไฮบริด (Hybrid)</span></div>
+          </div>
+          <ul class="lecturers"><li>รศ.ดร.อัจฉริยา พ่วงแก้ว (ภาควิชาการพยาบาลอายุรศาสตร์)</li></ul>
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">21 ส.ค. 2569</div>
+          <div class="time">08:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">เศรษฐศาสตร์ระบบสุขภาพและการประเมินความคุ้มค่าของมาตรการทางสุขภาพ / ระบบการเงินการคลังและการเบิกจ่ายในระบบสุขภาพ</h3>
+            <div class="badges"><span class="unit-badge">หน่วยที่ 1</span><span class="pill fmt-hybrid">ไฮบริด (Hybrid)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.พิเชต วงรอต (รองคณบดีฝ่ายบริการวิชาการและขับเคลื่อนนโยบายชี้นำสังคม)</li></ul>
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">21 ส.ค. 2569</div>
+          <div class="time">13:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">การประเมินภาวะจิตใจ อารมณ์ สังคมและจิตวิญญาณในผู้ป่วยที่ได้รับการผ่าตัด</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>อ.ดร.ภาศิษฏา อ่อนดี</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section class="week">
+      <h2 class="week-header"><span class="week-label">สัปดาห์ที่ 2</span><span class="week-range">24 ส.ค. 2569 – 28 ส.ค. 2569</span></h2>
+      <div class="sessions">
+        
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">24 ส.ค. 2569</div>
+          <div class="time">08:00 – 10:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">แนวคิดและหลักการประเมินภาวะสุขภาพ</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.พรสินี เต็งพานิชกุล</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">24 ส.ค. 2569</div>
+          <div class="time">10:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">การประเมินร่างกายระบบ: Head, Face, Neck, Skin and Lymphatic System</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.พรสินี เต็งพานิชกุล</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">24 ส.ค. 2569</div>
+          <div class="time">13:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">การพัฒนาคุณภาพองค์กรในระบบสุขภาพ/การพัฒนาคุณภาพการรักษาพยาบาลในการพยาบาลปริศัลยกรรม/การประเมินผลลัพธ์ทางการพยาบาลเฉพาะสาขาปริศัลยกรรม ครั้งที่ 1</h3>
+            <div class="badges"><span class="unit-badge">หน่วยที่ 3</span><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ศ.ดร.อุษาวดี อัศดรวิเศษ</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">25 ส.ค. 2569</div>
+          <div class="time">08:30 – 10:30 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">ประชุมพิจารณาหัวข้อสัมมนา</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ศ.ดร.อุษาวดี อัศดรวิเศษ</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">25 ส.ค. 2569</div>
+          <div class="time">10:30 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Self-study</h3>
+            <div class="badges"><span class="pill fmt-selfstudy">ศึกษาด้วยตนเอง (Self-study)</span></div>
+          </div>
+          
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">25 ส.ค. 2569</div>
+          <div class="time">13:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Self-study</h3>
+            <div class="badges"><span class="pill fmt-selfstudy">ศึกษาด้วยตนเอง (Self-study)</span></div>
+          </div>
+          
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">26 ส.ค. 2569</div>
+          <div class="time">08:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">การพัฒนาคุณภาพองค์กรในระบบสุขภาพ/การพัฒนาคุณภาพการรักษาพยาบาลในการพยาบาลปริศัลยกรรม/การประเมินผลลัพธ์ทางการพยาบาลเฉพาะสาขาปริศัลยกรรม ครั้งที่ 2</h3>
+            <div class="badges"><span class="unit-badge">หน่วยที่ 3</span><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ศ.ดร.อุษาวดี อัศดรวิเศษ</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">26 ส.ค. 2569</div>
+          <div class="time">13:00 – 15:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">การรับรองคุณภาพโรงพยาบาลและการรับรองเฉพาะโรค</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.วรารัตน์ บุญณสะ (ภาควิชาศัลยศาสตร์ออร์โธปิดิคส์และกายภาพบำบัด)</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">26 ส.ค. 2569</div>
+          <div class="time">15:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Self-study</h3>
+            <div class="badges"><span class="pill fmt-selfstudy">ศึกษาด้วยตนเอง (Self-study)</span></div>
+          </div>
+          
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">27 ส.ค. 2569</div>
+          <div class="time">09:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">มโนมติทางการพยาบาลปริศัลยกรรม</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ศ.ดร.อุษาวดี อัศดรวิเศษ</li><li>อ.นลินทิพย์ นิรันดร์ทวีชัย</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">27 ส.ค. 2569</div>
+          <div class="time">13:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Orientation for Seminar in Perioperative Nursing แบ่งกลุ่มประเด็นและแนวโน้ม ประชุมครั้งที่ 1</h3>
+            <div class="badges"><span class="unit-badge">หน่วยที่ 3</span><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ศ.ดร.อุษาวดี อัศดรวิเศษ</li><li>อ.นลินทิพย์ นิรันดร์ทวีชัย</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">28 ส.ค. 2569</div>
+          <div class="time">08:00 – 09:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Cost Analysis in OR</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.กุลวรา คุปรัตน์ (งานการพยาบาลผ่าตัด)</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">28 ส.ค. 2569</div>
+          <div class="time">09:00 – 11:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Competency in OR</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.ธนพรรณ กุณาละสิริ (งานการพยาบาลผ่าตัด)</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">28 ส.ค. 2569</div>
+          <div class="time">11:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Care for One Day Surgery (ODS) Patients</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.วราลักษณ์ บุญชัย (งานการพยาบาลผ่าตัด)</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">28 ส.ค. 2569</div>
+          <div class="time">13:00 – 15:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">การบริหารจัดการความเสี่ยงในห้องผ่าตัด</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.น้องนุช ภูมิสนธิ์</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">28 ส.ค. 2569</div>
+          <div class="time">15:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Self-study</h3>
+            <div class="badges"><span class="pill fmt-selfstudy">ศึกษาด้วยตนเอง (Self-study)</span></div>
+          </div>
+          
+          
+          
+          
+          
+          
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section class="week">
+      <h2 class="week-header"><span class="week-label">สัปดาห์ที่ 3</span><span class="week-range">31 ส.ค. 2569 – 4 ก.ย. 2569</span></h2>
+      <div class="sessions">
+        
+      <article class="session session-exam">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">31 ส.ค. 2569</div>
+          <div class="time">08:30 – 09:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">สอบ หัวข้อของ ผศ.พิเชต วงรอต (เศรษฐศาสตร์ระบบสุขภาพและการประเมินความคุ้มค่าของมาตรการทางสุขภาพ / ระบบการเงินการคลังและการเบิกจ่ายในระบบสุขภาพ)</h3>
+            <div class="badges"><span class="pill fmt-exam">สอบ (Exam)</span></div>
+          </div>
+          <ul class="lecturers"><li>อาจารย์ประจำสาขา (ควบคุมสอบ)</li></ul>
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">31 ส.ค. 2569</div>
+          <div class="time">10:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">การประเมินร่างกายตามระบบ: เต้านม ช่องท้อง ระบบอวัยวะสืบพันธุ์ภายนอกและทวารหนัก</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.ดร.รัตติมา ศิริโหราชัย</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          <div class="moved">↩ ย้ายมาจากวันที่ 25 ส.ค. 2569</div>
+          <ul class="notes"><li>ย้ายมาจากวันที่ 25 ส.ค.69</li></ul>
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">31 ส.ค. 2569</div>
+          <div class="time">13:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">การประเมินร่างกาย: Nervous System and Musculoskeletal System</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.ดร.รัตติมา ศิริโหราชัย</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          <div class="moved">↩ ย้ายมาจากวันที่ 25 ส.ค. 2569</div>
+          <ul class="notes"><li>ย้ายมาจากวันที่ 25 ส.ค.69</li></ul>
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">1 ก.ย. 2569</div>
+          <div class="time">09:00 – 11:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">การประเมินร่างกายตามระบบ: Thorax</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.พรสินี เต็งพานิชกุล</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">1 ก.ย. 2569</div>
+          <div class="time">11:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">การตรวจทางห้องปฏิบัติการและการตรวจพิเศษที่จำเป็นสำหรับผู้ป่วยที่มารับการผ่าตัด การบันทึกทางการพยาบาลปริศัลยกรรม</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.พรสินี เต็งพานิชกุล</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">1 ก.ย. 2569</div>
+          <div class="time">13:00 – 14:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Men&#x27;s Health</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>อ.นพ.ธวัชชัย มั่นคงศรีสุข</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">1 ก.ย. 2569</div>
+          <div class="time">14:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Anatomy, physiology and urology</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>อ.พญ.สรรพพร บุญวงศ์</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">2 ก.ย. 2569</div>
+          <div class="time">08:00 – 09:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Perioperative Nursing Care in GI</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.วทัญญู ตาเวียรชัย</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">2 ก.ย. 2569</div>
+          <div class="time">09:00 – 11:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Beyond Routine: Evidence-Based Perioperative Nursing in the Era of ... (งานการพยาบาลผ่าตัด)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.วริศรา ตุวยานนท์</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">2 ก.ย. 2569</div>
+          <div class="time">11:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Perioperative nursing care in URO (ภาควิชาศัลยศาสตร์)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.ญาณนันท์ รัตนธีรวิเชียร</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">3 ก.ย. 2569</div>
+          <div class="time">08:00 – 09:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Role of Perioperative Nurse in Organ Transplantation (Donor Phase) (งานการพยาบาลผ่าตัด)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.กมลทิพย์ สกุลกันบัณฑิต</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">3 ก.ย. 2569</div>
+          <div class="time">09:00 – 10:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Role of Transplant Coordinator Nurse in Organ Donation (งานเปลี่ยนอวัยวะศิริราช)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.พีรา ปานพรม</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">3 ก.ย. 2569</div>
+          <div class="time">10:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Anatomy, Physiology and surgery (การเปลี่ยนอวัยวะ)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.นพ.ปุณณฤกษ์ ทองเจริญ</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">3 ก.ย. 2569</div>
+          <div class="time">13:00 – 14:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Role of Perioperative Nurse in Organ Transplantation (Recipient Phase) (งานการพยาบาลผ่าตัด)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.กมลทิพย์ สกุลกันบัณฑิต</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">3 ก.ย. 2569</div>
+          <div class="time">14:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Anatomy, physiology and surgery in Upper Extremity (ภาควิชาศัลยศาสตร์ออร์โธปิดิคส์)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.นพ.ปณัย เลาหประสิทธิพร</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">4 ก.ย. 2569</div>
+          <div class="time">08:00 – 10:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Anatomy, physiology and surgery in Lower Extremity (ภาควิชาศัลยศาสตร์ออร์โธปิดิคส์)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>รศ.นพ.ทศหาญ รุ่งโรจน์</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">4 ก.ย. 2569</div>
+          <div class="time">10:00 – 11:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Perioperative nursing care in cardiothoracic surgery (งานการพยาบาลผ่าตัด)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.วิไลวรรณ อมรเดชเทวินทร์</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">4 ก.ย. 2569</div>
+          <div class="time">11:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Perioperative Nursing Care in Orthopaedic: การพยาบาลผู้ป่วยผ่าตัดเปลี่ยนข้อสะโพกเทียม (งานการพยาบาลผ่าตัด)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.มนันพัทธ์ ทองบุญเกื้อ</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">4 ก.ย. 2569</div>
+          <div class="time">15:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Perioperative Nursing Care in Orthopaedic: การพยาบาลผู้ป่วยผ่าตัดเปลี่ยนข้อเข่าเทียม (งานการพยาบาลผ่าตัด)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.ศิริชล เนตรสว่าง</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section class="week">
+      <h2 class="week-header"><span class="week-label">สัปดาห์ที่ 4</span><span class="week-range">7 ก.ย. 2569 – 11 ก.ย. 2569</span></h2>
+      <div class="sessions">
+        
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">7 ก.ย. 2569</div>
+          <div class="time">08:00 – 10:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">การพยาบาลผู้ป่วยที่ได้รับการส่องกล้องระบบทางเดินอาหาร (งานการพยาบาลผ่าตัด)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.ปฐมพร บุนนาค</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">7 ก.ย. 2569</div>
+          <div class="time">08:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">ปฏิบัติการตรวจร่างกาย Lab 1: Head, Face, Neck, Skin and Lymphatic System (กลุ่มคู่ขนาน)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ศ.ดร.อุษาวดี อัศดรวิเศษ และทีม (ผศ.ดร.ณัฐมา ทองธีรธรรม, ผศ.พรสินี เต็งพานิชกุล, ผศ.สกุลรัตน์ เตียววานิช, อ.ดร.ภรณ์ทิพย์ สุญาสิทธิ์, อ.คัทลียา คงเพ็ชร, อ.นลินทิพย์ นิรันดร์ทวีชัย)</li></ul>
+          <div class="meta-row"><span class="room">📍 LRC</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">7 ก.ย. 2569</div>
+          <div class="time">10:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Anesthesia and perioperative surgery (ภาควิชาวิสัญญีวิทยา)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>รศ.นพ.ประเสริฐ สวัสดิ์วิภาชัย</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">7 ก.ย. 2569</div>
+          <div class="time">13:00 – 16:30 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">ปฏิบัติการตรวจร่างกาย Lab 2: Thorax, lung and Cardiovascular system, Abdomen and Breasts</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ศ.ดร.อุษาวดี อัศดรวิเศษ และทีม (ผศ.ดร.ณัฐมา ทองธีรธรรม, ผศ.พรสินี เต็งพานิชกุล, ผศ.สกุลรัตน์ เตียววานิช, อ.ดร.ภรณ์ทิพย์ สุญาสิทธิ์, อ.คัทลียา คงเพ็ชร, อ.นลินทิพย์ นิรันดร์ทวีชัย)</li></ul>
+          <div class="meta-row"><span class="room">📍 LRC</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">9 ก.ย. 2569</div>
+          <div class="time">08:00 – 09:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Self-study</h3>
+            <div class="badges"><span class="pill fmt-selfstudy">ศึกษาด้วยตนเอง (Self-study)</span></div>
+          </div>
+          
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">9 ก.ย. 2569</div>
+          <div class="time">09:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Acquired heart disease and surgery / Surgical treatment of Aortic disease (ภาควิชาศัลยศาสตร์)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>อ.นพ.อังศุธร ชาติรังสรรค์</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">9 ก.ย. 2569</div>
+          <div class="time">13:00 – 17:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">ปฏิบัติการตรวจร่างกาย Lab 2: Thorax, lung and Cardiovascular system, Abdomen and Breasts (กลุ่มที่ 2)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ศ.ดร.อุษาวดี อัศดรวิเศษ และทีม</li></ul>
+          <div class="meta-row"><span class="room">📍 LRC</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">10 ก.ย. 2569</div>
+          <div class="time">08:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">กิจกรรมไหว้ครู</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          
+          <div class="meta-row"><span class="room">📍 ชั้น 1 ศาลายา</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">10 ก.ย. 2569</div>
+          <div class="time">13:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">เยี่ยมชมหอพระราชประวัติศรีสวรินทิราราชภักดี และหอพระราชประวัติบรมราชบุพการีกิตติประกาศ</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          
+          <div class="meta-row"><span class="room">📍 คณะพยาบาลศาสตร์ ศาลายา</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session session-exam">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">11 ก.ย. 2569</div>
+          <div class="time">08:00 – 10:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">สอบข้อเขียนวิชาพยศ 506: การประเมินภาวะสุขภาพ</h3>
+            <div class="badges"><span class="pill fmt-exam">สอบ (Exam)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.พรสินี เต็งพานิชกุล</li></ul>
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">11 ก.ย. 2569</div>
+          <div class="time">08:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">ปฏิบัติการตรวจร่างกาย Lab 3: Nervous System and Musculoskeletal System</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ศ.ดร.อุษาวดี อัศดรวิเศษ และทีม (ผศ.ดร.ณัฐมา ทองธีรธรรม, ผศ.พรสินี เต็งพานิชกุล, ผศ.สกุลรัตน์ เตียววานิช, อ.ดร.ภรณ์ทิพย์ สุญาสิทธิ์, อ.คัทลียา คงเพ็ชร, อ.นลินทิพย์ นิรันดร์ทวีชัย)</li></ul>
+          <div class="meta-row"><span class="room">📍 LRC</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">11 ก.ย. 2569</div>
+          <div class="time">09:00 – 10:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Perioperative Nursing care in Otorhinolaryngology: DISE and Modified UPPP (งานการพยาบาลผ่าตัด)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.สุภาวดี ดีเจริญ</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">11 ก.ย. 2569</div>
+          <div class="time">10:00 – 11:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Perioperative Nursing care in Otorhinolaryngology: Sialendoscopy (งานการพยาบาลผ่าตัด)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.นฤมล พละสุข</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">11 ก.ย. 2569</div>
+          <div class="time">10:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Anatomy and Physiology and Surgery in GI Surgery (ภาควิชาศัลยศาสตร์)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>อ.พญ.อิสริยา มงคลศุภวาร</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">11 ก.ย. 2569</div>
+          <div class="time">11:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Emergency management in ENT (งานการพยาบาลผ่าตัด)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.กร อังสุวรรณเขต</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">11 ก.ย. 2569</div>
+          <div class="time">13:00 – 14:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Perioperative Nursing Care in Neurology Navigator: Usage and maintenance (งานการพยาบาลผ่าตัด)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.ธนัชพร ผลทวีชัย</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">11 ก.ย. 2569</div>
+          <div class="time">13:00 – 16:30 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">ปฏิบัติการตรวจร่างกาย Lab 3: Nervous System and Musculoskeletal System (ต่อ)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ศ.ดร.อุษาวดี อัศดรวิเศษ และทีม</li></ul>
+          <div class="meta-row"><span class="room">📍 LRC</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">11 ก.ย. 2569</div>
+          <div class="time">14:00 – 15:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Perioperative Nursing Care in Neurology Navigator: Apply to neurosurgery (งานการพยาบาลผ่าตัด)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.จันจิรา จารุพัตร</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">11 ก.ย. 2569</div>
+          <div class="time">15:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Perioperative Nursing Care in Neurology Endoscope in neurosurgery (งานการพยาบาลผ่าตัด)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.ธนพรรณ กุณาละสิริ</li><li>ผศ.พญ.เพียงพร ศักดิ์ศิริวุฒิโฒ</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section class="week">
+      <h2 class="week-header"><span class="week-label">สัปดาห์ที่ 5</span><span class="week-range">14 ก.ย. 2569 – 18 ก.ย. 2569</span></h2>
+      <div class="sessions">
+        
+      <article class="session session-nodata">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">14 ก.ย. 2569</div>
+          
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">(ไม่มีข้อมูล)</h3>
+            <div class="badges"></div>
+          </div>
+          
+          
+          
+          <ul class="notes"><li>ข้อมูลขาดสำหรับช่วงวันที่ 14–16 ก.ย. 2569 ในเอกสารต้นฉบับ</li></ul>
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">17 ก.ย. 2569</div>
+          <div class="time">08:00 – 10:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Ophthalmic anatomy and physiology (ภาควิชาจักษุวิทยา)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">17 ก.ย. 2569</div>
+          <div class="time">13:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Anatomy, Physiology of ENT system / surgery (ภาควิชาโสต ศอ นาสิก ลาริงซ์วิทยา)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>รศ.นพ.ภาวิน เกษกุล</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">18 ก.ย. 2569</div>
+          <div class="time">08:00 – 10:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Recommendation practice for sterilization (งานการพยาบาลผ่าตัด)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.กุลวรา คุปรัตน์</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">18 ก.ย. 2569</div>
+          <div class="time">13:00 – 14:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Loaner Instrument (งานการพยาบาลผ่าตัด)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.หทัยา รัตนโชติ</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">18 ก.ย. 2569</div>
+          <div class="time">15:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">การส่งต่อข้อมูล (Hand off communication) (งานการพยาบาลผ่าตัด)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.สุดารัตน์ ศรีสมุทรนาค</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section class="week">
+      <h2 class="week-header"><span class="week-label">สัปดาห์ที่ 6</span><span class="week-range">21 ก.ย. 2569 – 22 ก.ย. 2569</span></h2>
+      <div class="sessions">
+        
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">21 ก.ย. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">สอบปฏิบัติการตรวจร่างกาย (Lab 1, 2, 3)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ศ.ดร.อุษาวดี อัศดรวิเศษ และทีมอาจารย์</li></ul>
+          <div class="meta-row"><span class="room">📍 LRC</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">21 ก.ย. 2569</div>
+          <div class="time">08:00 – 09:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Anatomy, Physiology and Surgery in OBGYN</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.นพ.พิสุทธิ์ ศรีชัยกุล</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">21 ก.ย. 2569</div>
+          <div class="time">09:00 – 10:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Perioperative Nursing Care in OBGYN Surgery</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.ฐจิติยา วายุภักตร์</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">21 ก.ย. 2569</div>
+          <div class="time">10:00 – 11:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Perioperative Nursing Care in GYN: Robotic Surgery</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.สุชาดา กล่อมจิต</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">21 ก.ย. 2569</div>
+          <div class="time">10:00 – 11:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Perioperative Nursing Care in Vascular Surgery</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.ศันสนีย์ บัวพูล</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">21 ก.ย. 2569</div>
+          <div class="time">10:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">ERAS: Concepts &amp; How to Implement?</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>รศ.พญ.มิ่งขวัญ วงษ์ยิ่งสิน</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">21 ก.ย. 2569</div>
+          <div class="time">11:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Robotic Surgery in GYN</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.นพ.บุญเลิศ วิรัยะภาค</li></ul>
+          <div class="meta-row"><span class="room">📍 308</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">21 ก.ย. 2569</div>
+          <div class="time">13:00 – 15:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Anatomy, Physiology and Surgery in Neurology</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.นพ.ปฤณัต อิทธิเมธินทร์</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">21 ก.ย. 2569</div>
+          <div class="time">13:00 – 15:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Perioperative Nursing Care in Ophthalmic Surgery</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.อัจฉราวดี สุบรรณเสณี</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">21 ก.ย. 2569</div>
+          <div class="time">13:00 – 15:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Anatomy, Physiology of Craniomaxillofacial System &amp; Surgery</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ศ.คลินิกเกียรติคุณ นพ.อภิรักษ์ ช่วงสุวนิช</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">21 ก.ย. 2569</div>
+          <div class="time">15:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">MEWs / Pressure Injury Prevention in OR</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.นพเก ภาชนะภัย</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">22 ก.ย. 2569</div>
+          <div class="time">08:00 – 09:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Common Operative Urogynecological Procedures to Malfunction</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.พญ.พัทยา เฮงรัศมี</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">22 ก.ย. 2569</div>
+          <div class="time">09:00 – 10:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Postoperative Nursing Care during Recovery Period / การพยาบาลผู้ป่วยกลุ่มที่ต้องได้รับการดูแลเป็นพิเศษ (เด็ก/ผู้สูงอายุ)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.สรรค์สณีย์ รัตนมนตรี</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">22 ก.ย. 2569</div>
+          <div class="time">09:00 – 10:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Perioperative Nursing Care in GI Surgery: Vascular Sealing</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.พจนีย์ ศิลปชัย</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">22 ก.ย. 2569</div>
+          <div class="time">10:00 – 11:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Anatomy, Physiology of Breast</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">22 ก.ย. 2569</div>
+          <div class="time">10:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Infection Control in OR</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.ศิริพร ราชคมน์</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">22 ก.ย. 2569</div>
+          <div class="time">11:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Perioperative Nursing Care in Breast Surgery</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.ธันยชนก จิรภัตตานนท์</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">22 ก.ย. 2569</div>
+          <div class="time">13:00 – 14:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">General Principle of Organ Transplantation</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ผศ.นพ.ประวัฒน์ โฆษิตะมงคล</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">22 ก.ย. 2569</div>
+          <div class="time">13:00 – 15:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Anatomy, Physiology and Surgery in Spine</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">22 ก.ย. 2569</div>
+          <div class="time">13:00 – 15:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Non-technical Skills for Patient Safety</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ดร.วรรณวิมล คงสุวรรณ</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">22 ก.ย. 2569</div>
+          <div class="time">14:00 – 15:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Perioperative Nursing Care in Plastic Surgery: Palatoplasty</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.อุชุตา เรืองวิญญูเวช</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section class="week">
+      <h2 class="week-header"><span class="week-label">สัปดาห์ที่ 7</span><span class="week-range">28 ก.ย. 2569 – 28 ก.ย. 2569</span></h2>
+      <div class="sessions">
+        
+      <article class="session session-nodata">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">28 ก.ย. 2569</div>
+          
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">(ไม่มีข้อมูล)</h3>
+            <div class="badges"></div>
+          </div>
+          
+          
+          
+          <ul class="notes"><li>ไม่มีแถวข้อมูลสำหรับสัปดาห์ที่ 7 ในเอกสารต้นฉบับ</li></ul>
+          
+          
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section class="week">
+      <h2 class="week-header"><span class="week-label">สัปดาห์ที่ 8</span><span class="week-range">5 ต.ค. 2569 – 9 ต.ค. 2569</span></h2>
+      <div class="sessions">
+        
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">5 ต.ค. 2569</div>
+          <div class="time">09:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Design Thinking in Healthcare</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>นพ.สิชล ลือฤทธิพงษ์ และทีม (ศูนย์ขับเคลื่อนคุณค่าการบริการ)</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">5 ต.ค. 2569</div>
+          <div class="time">13:00 – 15:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">การจัดทำโครงการพัฒนาคุณภาพ (งานการพยาบาลผ่าตัด)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ดร.วรรณวิมล คงสุวรรณ</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">7 ต.ค. 2569</div>
+          <div class="time">08:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">สัมมนากลุ่ม 1–2</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>อาจารย์ประจำกลุ่มและทีมอาจารย์ผู้สอน</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">7 ต.ค. 2569</div>
+          <div class="time">13:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">สัมมนากลุ่ม 3–4</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>อาจารย์ประจำกลุ่มและทีมอาจารย์ผู้สอน</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">8 ต.ค. 2569</div>
+          <div class="time">08:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">สัมมนากลุ่ม 5–6</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>อาจารย์ประจำกลุ่มและทีมอาจารย์ผู้สอน</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">8 ต.ค. 2569</div>
+          <div class="time">13:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">สัมมนากลุ่ม 7–8</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>อาจารย์ประจำกลุ่มและทีมอาจารย์ผู้สอน</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">9 ต.ค. 2569</div>
+          <div class="time">08:00 – 10:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Orientation ขึ้นฝึกปฏิบัติ</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.วริศรา ตุวยานนท์</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">9 ต.ค. 2569</div>
+          <div class="time">10:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">หลักการบริหารและจัดการงานการพยาบาล</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ดร.วรรณวิมล คงสุวรรณ</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section class="week">
+      <h2 class="week-header"><span class="week-label">สัปดาห์ที่ 9</span><span class="week-range">15 ต.ค. 2569 – 15 ต.ค. 2569</span></h2>
+      <div class="sessions">
+        
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">15 ต.ค. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Clinical practice</h3>
+            <div class="badges"><span class="pill fmt-clinical">ฝึกปฏิบัติ (Clinical)</span></div>
+          </div>
+          
+          
+          
+          
+          
+          
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section class="week">
+      <h2 class="week-header"><span class="week-label">สัปดาห์ที่ 10</span><span class="week-range">19 ต.ค. 2569 – 22 ต.ค. 2569</span></h2>
+      <div class="sessions">
+        
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">19 ต.ค. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Clinical practice</h3>
+            <div class="badges"><span class="pill fmt-clinical">ฝึกปฏิบัติ (Clinical)</span></div>
+          </div>
+          
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">20 ต.ค. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Clinical practice</h3>
+            <div class="badges"><span class="pill fmt-clinical">ฝึกปฏิบัติ (Clinical)</span></div>
+          </div>
+          
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">21 ต.ค. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Clinical practice</h3>
+            <div class="badges"><span class="pill fmt-clinical">ฝึกปฏิบัติ (Clinical)</span></div>
+          </div>
+          
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">22 ต.ค. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Clinical practice</h3>
+            <div class="badges"><span class="pill fmt-clinical">ฝึกปฏิบัติ (Clinical)</span></div>
+          </div>
+          
+          
+          
+          
+          
+          
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section class="week">
+      <h2 class="week-header"><span class="week-label">สัปดาห์ที่ 11</span><span class="week-range">26 ต.ค. 2569 – 28 ต.ค. 2569</span></h2>
+      <div class="sessions">
+        
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">26 ต.ค. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Clinical practice</h3>
+            <div class="badges"><span class="pill fmt-clinical">ฝึกปฏิบัติ (Clinical)</span></div>
+          </div>
+          
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">27 ต.ค. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Clinical practice</h3>
+            <div class="badges"><span class="pill fmt-clinical">ฝึกปฏิบัติ (Clinical)</span></div>
+          </div>
+          
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">28 ต.ค. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Clinical practice (หอผู้ป่วย)</h3>
+            <div class="badges"><span class="pill fmt-clinical">ฝึกปฏิบัติ (Clinical)</span></div>
+          </div>
+          
+          <div class="meta-row"><span class="room">📍 หอผู้ป่วย</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section class="week">
+      <h2 class="week-header"><span class="week-label">สัปดาห์ที่ 12</span><span class="week-range">2 พ.ย. 2569 – 6 พ.ย. 2569</span></h2>
+      <div class="sessions">
+        
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">2 พ.ย. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Clinical practice (หอผู้ป่วย)</h3>
+            <div class="badges"><span class="pill fmt-clinical">ฝึกปฏิบัติ (Clinical)</span></div>
+          </div>
+          <ul class="lecturers"><li>อาจารย์ภาคปฏิบัติ</li></ul>
+          <div class="meta-row"><span class="room">📍 หอผู้ป่วย</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">3 พ.ย. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Clinical practice (หอผู้ป่วย)</h3>
+            <div class="badges"><span class="pill fmt-clinical">ฝึกปฏิบัติ (Clinical)</span></div>
+          </div>
+          <ul class="lecturers"><li>อาจารย์ภาคปฏิบัติ</li></ul>
+          <div class="meta-row"><span class="room">📍 หอผู้ป่วย</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">4 พ.ย. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Clinical practice (หอผู้ป่วย)</h3>
+            <div class="badges"><span class="pill fmt-clinical">ฝึกปฏิบัติ (Clinical)</span></div>
+          </div>
+          <ul class="lecturers"><li>อาจารย์ภาคปฏิบัติ</li></ul>
+          <div class="meta-row"><span class="room">📍 หอผู้ป่วย</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">6 พ.ย. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Clinical practice (หอผู้ป่วย)</h3>
+            <div class="badges"><span class="pill fmt-clinical">ฝึกปฏิบัติ (Clinical)</span></div>
+          </div>
+          <ul class="lecturers"><li>อาจารย์ภาคปฏิบัติ</li></ul>
+          <div class="meta-row"><span class="room">📍 หอผู้ป่วย</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section class="week">
+      <h2 class="week-header"><span class="week-label">สัปดาห์ที่ 13</span><span class="week-range">9 พ.ย. 2569 – 13 พ.ย. 2569</span></h2>
+      <div class="sessions">
+        
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">9 พ.ย. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Clinical practice (หอผู้ป่วย)</h3>
+            <div class="badges"><span class="pill fmt-clinical">ฝึกปฏิบัติ (Clinical)</span></div>
+          </div>
+          <ul class="lecturers"><li>อาจารย์ภาคปฏิบัติ</li></ul>
+          <div class="meta-row"><span class="room">📍 หอผู้ป่วย</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">10 พ.ย. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Clinical practice (หอผู้ป่วย)</h3>
+            <div class="badges"><span class="pill fmt-clinical">ฝึกปฏิบัติ (Clinical)</span></div>
+          </div>
+          <ul class="lecturers"><li>อาจารย์ภาคปฏิบัติ</li></ul>
+          <div class="meta-row"><span class="room">📍 หอผู้ป่วย</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">12 พ.ย. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">นำเสนอโครงการพัฒนาคุณภาพ</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>อาจารย์ภาคปฏิบัติและทีมอาจารย์ผู้สอน</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">13 พ.ย. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">นำเสนอโครงการพัฒนาคุณภาพ (ต่อ)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ทีมอาจารย์ผู้สอน</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section class="week">
+      <h2 class="week-header"><span class="week-label">สัปดาห์ที่ 14</span><span class="week-range">16 พ.ย. 2569 – 20 พ.ย. 2569</span></h2>
+      <div class="sessions">
+        
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">จันทร์</div>
+          <div class="date">16 พ.ย. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Clinical practice</h3>
+            <div class="badges"><span class="pill fmt-clinical">ฝึกปฏิบัติ (Clinical)</span></div>
+          </div>
+          
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">17 พ.ย. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Clinical practice</h3>
+            <div class="badges"><span class="pill fmt-clinical">ฝึกปฏิบัติ (Clinical)</span></div>
+          </div>
+          
+          
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session session-muted">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">18 พ.ย. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Clinical practice (หอผู้ป่วย)</h3>
+            <div class="badges"><span class="pill fmt-clinical">ฝึกปฏิบัติ (Clinical)</span></div>
+          </div>
+          <ul class="lecturers"><li>อาจารย์ภาคปฏิบัติ</li></ul>
+          <div class="meta-row"><span class="room">📍 หอผู้ป่วย</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">20 พ.ย. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Site visit: คลินิกเวชศาสตร์การกีฬา (กลุ่ม ORTHO), RR3 (กลุ่ม EYE), RR4 (กลุ่ม CVT/ENT), RR5 (กลุ่ม GEN/Uro), หน่วยตรวจและติดตามผลการรักษาออร์โธปิดิคส์ (กลุ่ม ORTHO), Stroke Unit, ห้องตรวจ CVT และห้องตรวจ Vascular ตึกสยามินทร์ชั้น 1, กลุ่ม OBG</h3>
+            <div class="badges"><span class="pill fmt-sitevisit">ดูงาน (Site visit)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.ดวงดาว มหา</li><li>พว.เบญจวรรณ พวงเพชร</li><li>พว.ทวิวรรณ อินทร์แก้ว</li><li>พว.พัทธมน ทิพกร</li><li>พว.วริศรา เข็มทอง</li><li>พว.มนันชยา กองเมืองปัก</li><li>พว.วนิดา อาจศิริ</li><li>พว.กุลรดา ศิวสฤษดิ์</li><li>พว.มัลลิกา วังสระ</li></ul>
+          
+          
+          
+          
+          
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section class="week">
+      <h2 class="week-header"><span class="week-label">สัปดาห์ที่ 15</span><span class="week-range">26 พ.ย. 2569 – 26 พ.ย. 2569</span></h2>
+      <div class="sessions">
+        
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">26 พ.ย. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Site visit: ห้องตรวจจักษุ (กลุ่ม EYE), ห้องตรวจพิเศษ ENT (กลุ่ม ENT), BREAST CENTER (กลุ่ม General/OBGYN), GI Center ตึก 84/3 (กลุ่ม GEN)</h3>
+            <div class="badges"><span class="pill fmt-sitevisit">ดูงาน (Site visit)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.สุพัตรา ศราธพันธ์</li><li>พว.วิมลทิพย์ ศรีเจริญ</li><li>พว.เยาวลักษณ์ คล้ายทอง</li><li>พว.ปฐมพร บุนนาค</li></ul>
+          
+          
+          
+          
+          
+        </div>
+      </article>
+      </div>
+    </section>
+
+    <section class="week">
+      <h2 class="week-header"><span class="week-label">สัปดาห์ที่ 16</span><span class="week-range">1 ธ.ค. 2569 – 4 ธ.ค. 2569</span></h2>
+      <div class="sessions">
+        
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">1 ธ.ค. 2569</div>
+          <div class="time">08:00 – 09:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">บทบาทการพยาบาลในการผ่าตัดผู้ป่วย Hemorrhagic Stroke</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.ธนัชพร ผลทวีชัย</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">1 ธ.ค. 2569</div>
+          <div class="time">09:00 – 10:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">บทบาทการพยาบาลกับ New Technology in Urology Surgery</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.ญาณนันท์ รัตนธีรวิเชียร</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">1 ธ.ค. 2569</div>
+          <div class="time">10:00 – 11:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">บทบาทการพยาบาลในการผ่าตัด Pressurized Intraperitoneal Aerosol Chemotherapy (PIPAC)</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.สุนันทา ดิษฐประเสริฐ</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">1 ธ.ค. 2569</div>
+          <div class="time">11:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">นวัตกรรมการให้ความรู้ผู้ป่วยเพื่อส่งเสริมการฟื้นตัวหลังผ่าตัด</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ดร.สุทธินี ทองทิพย์</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">1 ธ.ค. 2569</div>
+          <div class="time">13:00 – 14:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">บทบาทพยาบาลห้องผ่าตัดกับการผ่าตัดเปลี่ยนกระจกตา</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.อัจฉราวดี สุบรรณเสณี</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">1 ธ.ค. 2569</div>
+          <div class="time">14:00 – 15:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">บทบาทการพยาบาลในการผ่าตัด Lymphedema</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.พีรดา คุณานันทกิจ</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">อังคาร</div>
+          <div class="date">1 ธ.ค. 2569</div>
+          <div class="time">15:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">บทบาทของพยาบาลในการผ่าตัด Endoscopic Assisted Mastectomy</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.ธันยชนก จิรภัตตานนท์</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">2 ธ.ค. 2569</div>
+          <div class="time">08:00 – 09:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">บทบาทพยาบาลห้องผ่าตัดในการดูแลผู้ป่วยโรคหลอดเลือด</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.รัตนา เพียรเจริญสิน</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">2 ธ.ค. 2569</div>
+          <div class="time">09:00 – 10:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">บทบาทการพยาบาลผู้ป่วย CA Endometrium</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.ธิติยา ศาลไพล</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">2 ธ.ค. 2569</div>
+          <div class="time">10:00 – 11:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">บทบาทพยาบาลในการดูแลผู้ป่วยผ่าตัด Full Endoscopic Discectomy</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.กฤษณี ก้อนพิงค์</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">2 ธ.ค. 2569</div>
+          <div class="time">11:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">New Technology in GI Scope: What Endoscopy Nurses Should Know?</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.ภัคภร เกตุสีสังข์</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">2 ธ.ค. 2569</div>
+          <div class="time">13:00 – 14:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Evolution Treatment of Acute Limb Ischemia</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.อาณดา แก้วนาคุณมณี</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พุธ</div>
+          <div class="date">2 ธ.ค. 2569</div>
+          <div class="time">14:00 – 15:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">Perioperative Nursing Care in MIS Cardiovascular Thoracic Surgery</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>พว.อรวรรณ คำเหล้า</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">พฤหัสบดี</div>
+          <div class="date">3 ธ.ค. 2569</div>
+          <div class="time">08:00 – 16:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">สะท้อนคิดผลที่ได้รับ</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ศ.ดร.อุษาวดี อัศดรวิเศษ และทีมอาจารย์ผู้สอน</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+
+      <article class="session">
+        <div class="session-time">
+          <div class="day">ศุกร์</div>
+          <div class="date">4 ธ.ค. 2569</div>
+          <div class="time">08:00 – 12:00 น.</div>
+        </div>
+        <div class="session-body">
+          <div class="session-head">
+            <h3 class="topic">สะท้อนคิดผลที่ได้รับ (ต่อ) / ปัจฉิมนิเทศ</h3>
+            <div class="badges"><span class="pill fmt-onsite">เรียนในห้อง (Onsite)</span></div>
+          </div>
+          <ul class="lecturers"><li>ทีมอาจารย์ผู้สอน</li></ul>
+          <div class="meta-row"><span class="room">📍 508</span></div>
+          
+          
+          
+          
+        </div>
+      </article>
+      </div>
+    </section>
+    </main>
+
+    <footer class="page-footer">
+      สร้างจากไฟล์ schedule.json — ตารางเรียนฉบับนี้ใช้เพื่ออ้างอิงเท่านั้น กรุณาตรวจสอบประกาศทางการอีกครั้ง
+    </footer>
+  </div>
+</body>
+</html>
