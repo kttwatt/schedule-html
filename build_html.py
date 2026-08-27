@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
-"""Generate index.html (ตารางเรียน) from schedule.json — single offline file, no external CDN."""
+"""Generate index.html (ตารางเรียน) from schedule.md (authoritative) + schedule.json (course meta).
+
+schedule.md is the hand-reconciled source of truth: it already reflects cancellations
+("เลื่อน", marked with ❌) and sessions moved to later dates. schedule.json is only used
+for course header metadata (code/name/program/period).
+"""
 import json
+import re
 import html
 from datetime import datetime
 
@@ -10,13 +16,42 @@ THAI_MONTHS = [
 ]
 
 FORMAT_META = {
-    "onsite":    {"label": "เรียนในห้อง (Onsite)", "class": "fmt-onsite"},
-    "hybrid":    {"label": "ไฮบริด (Hybrid)",        "class": "fmt-hybrid"},
-    "selfstudy": {"label": "ศึกษาด้วยตนเอง (Self-study)", "class": "fmt-selfstudy"},
-    "exam":      {"label": "สอบ (Exam)",             "class": "fmt-exam"},
-    "clinical":  {"label": "ฝึกปฏิบัติ (Clinical)",   "class": "fmt-clinical"},
-    "sitevisit": {"label": "ดูงาน (Site visit)",      "class": "fmt-sitevisit"},
+    "onsite":    {"label": "Onsite", "class": "fmt-onsite"},
+    "hybrid":    {"label": "Hybrid", "class": "fmt-hybrid"},
+    "selfstudy": {"label": "Self-study", "class": "fmt-selfstudy"},
+    "exam":      {"label": "สอบ", "class": "fmt-exam"},
+    "clinical":  {"label": "Clinical", "class": "fmt-clinical"},
+    "sitevisit": {"label": "Site visit", "class": "fmt-sitevisit"},
 }
+
+LINK_RE = re.compile(r'\[([^\]]+)\]\(([^)]+)\)')
+BOLD_RE = re.compile(r'\*\*([^*]+)\*\*')
+URL_RE = re.compile(r'https?://\S+')
+INLINE_RE = re.compile(f'(?:{LINK_RE.pattern})|(?:{BOLD_RE.pattern})|(?:{URL_RE.pattern})')
+
+
+def esc(s):
+    return html.escape(s or "", quote=True)
+
+
+def render_inline(text):
+    """Minimal markdown -> HTML: [text](url), **bold**, bare URLs."""
+    if not text:
+        return ""
+    out = []
+    pos = 0
+    for m in INLINE_RE.finditer(text):
+        out.append(esc(text[pos:m.start()]))
+        if m.group(1) is not None:
+            out.append(f'<a href="{esc(m.group(2))}">{esc(m.group(1))}</a>')
+        elif m.group(3) is not None:
+            out.append(f'<strong>{esc(m.group(3))}</strong>')
+        else:
+            url = m.group(0)
+            out.append(f'<a href="{esc(url)}">{esc(url)}</a>')
+        pos = m.end()
+    out.append(esc(text[pos:]))
+    return "".join(out)
 
 
 def thai_date(iso_date):
@@ -27,120 +62,189 @@ def thai_date(iso_date):
     return f"{d.day} {THAI_MONTHS[d.month]} {d.year + 543}"
 
 
-def esc(s):
-    return html.escape(s or "", quote=True)
+def split_row(line):
+    parts = line.strip().split("|")
+    return [p.strip() for p in parts[1:-1]]
 
 
-def sort_key(session):
-    date = session.get("date") or ""
-    start = session.get("start_time") or ""
-    if not start or start == "-":
-        start = "99:99"
-    return (date, start)
+def is_separator_row(cells):
+    return all(re.fullmatch(r"-+", c) for c in cells if c)
 
 
-def render_pill(fmt):
-    meta = FORMAT_META.get(fmt)
-    if not meta:
+def parse_schedule_md(text):
+    lines = text.splitlines()
+    n = len(lines)
+    i = 0
+
+    # --- main schedule table ---
+    while i < n and not lines[i].startswith("| วันที่"):
+        i += 1
+    i += 1  # header row
+    i += 1  # separator row
+
+    main_rows = []
+    while i < n and not lines[i].startswith("## "):
+        if lines[i].startswith("|"):
+            main_rows.append(lines[i])
+        i += 1
+
+    sessions = []
+    week_label = ""
+    for line in main_rows:
+        cells = split_row(line)
+        if is_separator_row(cells):
+            continue
+        m = re.fullmatch(r"\*\*(.+)\*\*", cells[0])
+        if m:
+            week_label = m.group(1)
+            continue
+        if len(cells) < 6:
+            continue
+        date_text, time_text, unit, topic, lecturer, room = cells[:6]
+        if "ไม่มีข้อมูลในเอกสารต้นฉบับ" in topic:
+            continue
+        cancelled = topic.startswith("❌")
+        topic = topic.lstrip("❌").strip()
+        sessions.append({
+            "week": week_label,
+            "date_text": date_text,
+            "time": time_text,
+            "unit": unit,
+            "topic": topic,
+            "lecturer": lecturer,
+            "room": room,
+            "cancelled": cancelled,
+        })
+
+    # --- homework table ---
+    while i < n and "การบ้าน/งานส่ง" not in lines[i]:
+        i += 1
+    while i < n and not lines[i].startswith("| งาน"):
+        i += 1
+    i += 1  # header
+    i += 1  # separator
+
+    hw_rows = []
+    while i < n and lines[i].startswith("|"):
+        hw_rows.append(lines[i])
+        i += 1
+
+    homework = []
+    for line in hw_rows:
+        cells = split_row(line)
+        if is_separator_row(cells) or len(cells) < 5:
+            continue
+        homework.append(cells)
+
+    notes = []
+    while i < n and not lines[i].startswith("## "):
+        stripped = lines[i].strip()
+        if stripped.startswith(">"):
+            notes.append(stripped.lstrip(">").strip())
+        i += 1
+
+    return sessions, homework, notes
+
+
+def detect_format(topic, room):
+    t, r = topic, room
+    rl = r.lower()
+    tl = t.lower()
+    if "สอบ" in t or "สอบ" in r:
+        return "exam"
+    if "hybrid" in rl:
+        return "hybrid"
+    if "self-study" in tl or "self-study" in rl:
+        return "selfstudy"
+    if "clinical practice" in rl or "clinical practice" in tl:
+        return "clinical"
+    if "site visit" in rl:
+        return "sitevisit"
+    return "onsite"
+
+
+def pill_label(fmt, room):
+    meta = FORMAT_META[fmt]
+    if fmt in ("onsite", "clinical", "sitevisit") and room and room != "-":
+        return room
+    return meta["label"]
+
+
+def group_by_day(sessions):
+    days = []
+    for s in sessions:
+        if not days or days[-1]["date_text"] != s["date_text"]:
+            days.append({"date_text": s["date_text"], "week": s["week"], "sessions": []})
+        days[-1]["sessions"].append(s)
+    return days
+
+
+def render_session_row(s):
+    fmt = detect_format(s["topic"], s["room"])
+    classes = ["row"]
+    if s["cancelled"]:
+        classes.append("cancelled")
+
+    time_html = f'<span class="time">{esc(s["time"])}</span>' if s["time"] and s["time"] != "-" else '<span class="time">–</span>'
+
+    unit_html = ""
+    if s["unit"] and s["unit"] != "-":
+        unit_html = f'<span class="unit">{esc(s["unit"])}</span>'
+
+    topic_html = f'<span class="topic">{unit_html}{esc(s["topic"])}</span>'
+
+    who_html = f'<span class="who">{esc(s["lecturer"])}</span>' if s["lecturer"] and s["lecturer"] != "-" else ""
+
+    if s["cancelled"]:
+        pill_html = '<span class="pill fmt-cancelled">เลื่อน</span>'
+    else:
+        meta = FORMAT_META[fmt]
+        pill_html = f'<span class="pill {meta["class"]}">{esc(pill_label(fmt, s["room"]))}</span>'
+
+    return f'<div class="{" ".join(classes)}">{time_html}{topic_html}{who_html}{pill_html}</div>'
+
+
+def render_day(day, prev_week):
+    week_html = ""
+    if day["week"] and day["week"] != prev_week:
+        week_html = f'<div class="week-div">{esc(day["week"])}</div>'
+    rows_html = "\n".join(render_session_row(s) for s in day["sessions"])
+    return week_html + f"""<section class="day">
+  <div class="day-head">{esc(day["date_text"])}</div>
+  {rows_html}
+</section>"""
+
+
+def render_homework(homework, notes):
+    if not homework:
         return ""
-    return f'<span class="pill {meta["class"]}">{esc(meta["label"])}</span>'
-
-
-def render_session(session):
-    is_exam = bool(session.get("is_exam"))
-    fmt = session.get("format")
-    classes = ["session"]
-    if is_exam or fmt == "exam":
-        classes.append("session-exam")
-    elif fmt in ("selfstudy", "clinical"):
-        classes.append("session-muted")
-    if fmt is None and not session.get("start_time") or session.get("start_time") == "-":
-        classes.append("session-nodata")
-
-    day_th = esc(session.get("day_th"))
-    date_str = esc(thai_date(session.get("date")))
-    start = session.get("start_time") or ""
-    end = session.get("end_time") or ""
-    time_str = "" if start in ("", "-") else f"{esc(start)} – {esc(end)} น."
-
-    topic = esc(session.get("topic"))
-    unit = session.get("unit")
-    unit_badge = f'<span class="unit-badge">หน่วยที่ {unit}</span>' if unit else ""
-
-    lecturers = session.get("lecturers") or []
-    lecturers_html = ""
-    if lecturers:
-        items = "".join(f"<li>{esc(l)}</li>" for l in lecturers)
-        lecturers_html = f'<ul class="lecturers">{items}</ul>'
-
-    room = session.get("room")
-    room_html = f'<span class="room">📍 {esc(room)}</span>' if room else ""
-
-    pill_html = render_pill(fmt)
-    exam_badge = '<span class="pill fmt-exam">สอบ</span>' if is_exam and fmt != "exam" else ""
-
-    notes = session.get("notes") or []
+    header = ["งาน", "วิชา/หน่วย", "กำหนดส่ง", "คะแนน", "ลิงก์"]
+    thead = "".join(f"<th>{esc(h)}</th>" for h in header)
+    rows = []
+    for cells in homework:
+        tds = "".join(f"<td>{render_inline(c)}</td>" for c in cells)
+        rows.append(f"<tr>{tds}</tr>")
     notes_html = ""
     if notes:
-        items = "".join(f"<li>{esc(n)}</li>" for n in notes)
-        notes_html = f'<ul class="notes">{items}</ul>'
-
-    moved_from = session.get("moved_from")
-    moved_html = f'<div class="moved">↩ ย้ายมาจากวันที่ {esc(thai_date(moved_from))}</div>' if moved_from else ""
-
-    materials = session.get("materials") or []
-    materials_html = ""
-    if materials:
-        items = "".join(
-            f'<li><a href="{esc(m)}">{esc(m.split("/")[-1])}</a></li>' for m in materials
-        )
-        materials_html = f'<ul class="materials">{items}</ul>'
-
-    summary = session.get("summary")
-    summary_html = f'<div class="summary">📝 {esc(summary)}</div>' if summary else ""
-
+        items = "".join(f"<li>{render_inline(n)}</li>" for n in notes)
+        notes_html = f'<ul class="hw-notes">{items}</ul>'
     return f"""
-      <article class="{' '.join(classes)}">
-        <div class="session-time">
-          <div class="day">{day_th}</div>
-          <div class="date">{date_str}</div>
-          {f'<div class="time">{time_str}</div>' if time_str else ''}
-        </div>
-        <div class="session-body">
-          <div class="session-head">
-            <h3 class="topic">{topic}</h3>
-            <div class="badges">{unit_badge}{pill_html}{exam_badge}</div>
-          </div>
-          {lecturers_html}
-          {f'<div class="meta-row">{room_html}</div>' if room_html else ''}
-          {moved_html}
-          {notes_html}
-          {summary_html}
-          {materials_html}
-        </div>
-      </article>"""
-
-
-def render_week(week):
-    sessions = sorted(week.get("sessions") or [], key=sort_key)
-    sessions_html = "\n".join(render_session(s) for s in sessions)
-    dates = [s.get("date") for s in sessions if s.get("date")]
-    range_str = ""
-    if dates:
-        range_str = f'<span class="week-range">{esc(thai_date(min(dates)))} – {esc(thai_date(max(dates)))}</span>'
-    return f"""
-    <section class="week">
-      <h2 class="week-header"><span class="week-label">{esc(week.get('label'))}</span>{range_str}</h2>
-      <div class="sessions">
-        {sessions_html}
-      </div>
-    </section>"""
+<section class="homework">
+  <h2>การบ้าน/งานส่ง</h2>
+  <div class="hw-table-wrap">
+    <table>
+      <thead><tr>{thead}</tr></thead>
+      <tbody>{"".join(rows)}</tbody>
+    </table>
+  </div>
+  {notes_html}
+</section>"""
 
 
 CSS = """
 :root {
-  --bg: #f5f7fb;
-  --card-bg: #ffffff;
+  --bg: #f6f7f9;
+  --card: #fff;
   --text: #1f2530;
   --muted: #6b7280;
   --border: #e5e9f0;
@@ -151,333 +255,154 @@ CSS = """
   --hybrid: #7c3aed;
   --hybrid-light: #f1ebfe;
   --selfstudy: #6b7280;
-  --selfstudy-light: #f0f1f3;
+  --selfstudy-light: #eef0f3;
   --clinical: #059669;
   --clinical-light: #e6f7f1;
   --sitevisit: #d97706;
   --sitevisit-light: #fdf2e2;
-  --radius: 14px;
 }
-
 * { box-sizing: border-box; }
-
+html { font-size: 15px; }
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
   font-family: "Noto Sans Thai", "Sarabun", "TH Sarabun New", -apple-system, BlinkMacSystemFont,
     "Segoe UI", system-ui, sans-serif;
-  line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
+  line-height: 1.4;
 }
-
-.container {
-  max-width: 880px;
-  margin: 0 auto;
-  padding: 20px 16px 64px;
-}
+.container { max-width: 760px; margin: 0 auto; padding: 14px 12px 48px; }
 
 header.course-header {
-  background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
-  color: #fff;
-  border-radius: var(--radius);
-  padding: 28px 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.25);
+  padding: 10px 2px 12px;
+  border-bottom: 2px solid var(--primary);
+  margin-bottom: 10px;
 }
-
-header.course-header .code {
-  font-size: 0.9rem;
-  opacity: 0.85;
-  letter-spacing: 0.02em;
-  margin-bottom: 4px;
-}
-
-header.course-header h1 {
-  margin: 0 0 10px;
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.35;
-}
-
-header.course-header .program {
-  font-size: 0.92rem;
-  opacity: 0.92;
-  margin-bottom: 4px;
-}
-
-header.course-header .period {
-  font-size: 0.85rem;
-  opacity: 0.8;
-}
+header.course-header .code { font-size: .78rem; color: var(--primary); font-weight: 700; }
+header.course-header h1 { margin: 2px 0 4px; font-size: 1.15rem; line-height: 1.3; }
+header.course-header .program { font-size: .78rem; color: var(--muted); }
+header.course-header .period { font-size: .76rem; color: var(--muted); margin-top: 2px; }
 
 .legend {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px 18px;
-  margin-bottom: 24px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 16px;
-  align-items: center;
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-bottom: 14px; font-size: .72rem;
 }
 
-.legend .legend-title {
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: var(--muted);
-  margin-right: 4px;
+.week-div {
+  font-size: .74rem; font-weight: 700; color: var(--primary);
+  margin: 16px 0 4px; text-transform: uppercase; letter-spacing: .03em;
 }
+.week-div:first-child { margin-top: 0; }
 
-.week {
-  margin-bottom: 30px;
-}
-
-.week-header {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  flex-wrap: wrap;
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--text);
-  border-bottom: 2px solid var(--primary);
-  padding-bottom: 8px;
-  margin: 0 0 14px;
-  position: sticky;
-  top: 0;
-  background: var(--bg);
-  z-index: 1;
-  padding-top: 6px;
-}
-
-.week-label { color: var(--primary); }
-
-.week-range {
-  font-size: 0.82rem;
-  font-weight: 400;
-  color: var(--muted);
-}
-
-.sessions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.session {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--primary);
-  border-radius: var(--radius);
-  padding: 14px 16px;
-  display: flex;
-  gap: 16px;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
-}
-
-.session-exam {
-  border-left-color: var(--exam);
-  background: var(--exam-light);
-}
-
-.session-muted {
-  border-left-color: var(--selfstudy);
-  background: #fafafa;
-}
-
-.session-nodata {
-  border-left-color: var(--border);
-  border-style: dashed;
-  opacity: 0.75;
-}
-
-.session-time {
-  flex: 0 0 92px;
-  text-align: center;
-  padding-top: 2px;
-}
-
-.session-time .day {
-  font-weight: 700;
-  font-size: 0.92rem;
-}
-
-.session-time .date {
-  font-size: 0.75rem;
-  color: var(--muted);
-  margin-top: 2px;
-}
-
-.session-time .time {
+.day { margin-bottom: 4px; }
+.day-head {
+  font-size: .82rem; font-weight: 700;
+  background: var(--card);
+  border-radius: 6px;
+  padding: 4px 8px;
   margin-top: 6px;
-  font-size: 0.78rem;
+  position: sticky; top: 0;
+  border: 1px solid var(--border);
+}
+
+.row {
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  gap: 2px 8px;
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--border);
+  font-size: .82rem;
+}
+.row:last-child { border-bottom: none; }
+
+.row .time {
+  flex: 0 0 auto;
+  width: 5.2em;
   font-weight: 600;
   color: var(--primary);
-  background: var(--primary-light);
-  border-radius: 8px;
-  padding: 3px 6px;
+  font-variant-numeric: tabular-nums;
+  font-size: .76rem;
 }
-
-.session-exam .session-time .time {
-  color: var(--exam);
-  background: #fbdada;
-}
-
-.session-body {
-  flex: 1;
-  min-width: 0;
-}
-
-.session-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.topic {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text);
-  flex: 1 1 auto;
-  min-width: 180px;
-}
-
-.session-exam .topic { color: var(--exam); }
-
-.badges {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.pill {
-  font-size: 0.72rem;
-  font-weight: 600;
-  padding: 3px 9px;
-  border-radius: 999px;
-  white-space: nowrap;
-}
-
-.unit-badge {
-  font-size: 0.72rem;
-  font-weight: 600;
-  padding: 3px 9px;
-  border-radius: 999px;
-  background: #eef2f7;
+.row .unit {
+  font-size: .68rem;
   color: var(--muted);
+  background: #eef2f7;
+  border-radius: 4px;
+  padding: 1px 4px;
+  margin-right: 4px;
+}
+.row .topic { flex: 1 1 220px; }
+.row .who { flex: 0 1 auto; font-size: .74rem; color: var(--muted); }
+.row .pill {
+  flex: 0 0 auto;
+  margin-left: auto;
+  font-size: .68rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 999px;
   white-space: nowrap;
 }
+
+.row.cancelled { opacity: .65; }
+.row.cancelled .topic { text-decoration: line-through; color: var(--muted); }
+.row.cancelled .who { text-decoration: line-through; }
 
 .fmt-onsite    { background: var(--primary-light); color: var(--primary); }
 .fmt-hybrid    { background: var(--hybrid-light);   color: var(--hybrid); }
 .fmt-selfstudy { background: var(--selfstudy-light);color: var(--selfstudy); }
-.fmt-exam      { background: #fbdada;               color: var(--exam); }
+.fmt-exam      { background: var(--exam-light);     color: var(--exam); }
 .fmt-clinical  { background: var(--clinical-light); color: var(--clinical); }
 .fmt-sitevisit { background: var(--sitevisit-light);color: var(--sitevisit); }
+.fmt-cancelled { background: #f0f0f0; color: #9ca3af; }
 
-.lecturers {
-  list-style: none;
-  margin: 8px 0 0;
-  padding: 0;
-  font-size: 0.85rem;
-  color: var(--muted);
+.homework { margin-top: 26px; }
+.homework h2 {
+  font-size: 1rem; border-bottom: 2px solid var(--primary);
+  padding-bottom: 6px; margin: 0 0 10px;
 }
+.hw-table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .78rem; background: var(--card); }
+th, td { border: 1px solid var(--border); padding: 6px 8px; text-align: left; vertical-align: top; }
+th { background: var(--primary-light); color: var(--primary); font-size: .74rem; }
+table a { color: var(--primary); }
 
-.lecturers li::before { content: "👤 "; }
-.lecturers li { margin-top: 2px; }
-
-.meta-row {
-  margin-top: 6px;
-  font-size: 0.82rem;
-  color: var(--muted);
-}
-
-.moved {
-  margin-top: 8px;
-  font-size: 0.8rem;
-  color: var(--sitevisit);
-  background: var(--sitevisit-light);
-  border-radius: 8px;
-  padding: 5px 9px;
-  display: inline-block;
-}
-
-.notes {
-  margin: 8px 0 0;
-  padding-left: 18px;
-  font-size: 0.8rem;
-  color: var(--muted);
-  font-style: italic;
-}
-
-.summary {
-  margin-top: 8px;
-  font-size: 0.8rem;
-  color: var(--clinical);
-}
-
-.materials {
-  list-style: none;
-  margin: 8px 0 0;
-  padding: 0;
-  font-size: 0.8rem;
-}
-
-.materials li::before { content: "📎 "; }
-.materials a {
-  color: var(--primary);
-  text-decoration: none;
-}
-.materials a:hover { text-decoration: underline; }
+.hw-notes { margin: 10px 0 0; padding-left: 18px; font-size: .74rem; color: var(--muted); }
+.hw-notes li { margin-top: 4px; }
 
 footer.page-footer {
-  text-align: center;
-  color: var(--muted);
-  font-size: 0.78rem;
-  margin-top: 30px;
+  text-align: center; color: var(--muted); font-size: .72rem; margin-top: 24px;
 }
 
-@media (max-width: 560px) {
-  .session { flex-direction: column; gap: 6px; }
-  .session-time {
-    flex-direction: row;
-    justify-content: space-between;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding-top: 0;
-    flex: none;
-  }
-  .session-time .date { margin-top: 0; }
-  header.course-header h1 { font-size: 1.25rem; }
-  .week-header { font-size: 1.02rem; }
+@media (max-width: 480px) {
+  html { font-size: 14px; }
+  .row .topic { flex-basis: 100%; order: 3; }
+  .row .who { flex-basis: 100%; order: 4; }
+  .row .time { order: 1; }
+  .row .pill { order: 2; }
 }
 """
 
 
-def build_html(data):
-    course = data.get("course", {})
-    weeks = data.get("weeks", [])
-
-    weeks_html = "\n".join(render_week(w) for w in weeks)
+def build_html(course, sessions, homework, notes):
+    days = group_by_day(sessions)
+    prev_week = ""
+    day_blocks = []
+    for d in days:
+        day_blocks.append(render_day(d, prev_week))
+        prev_week = d["week"]
+    days_html = "\n".join(day_blocks)
 
     period = course.get("period") or {}
     period_html = ""
     if period.get("start") and period.get("end"):
-        period_html = f'<div class="period">📅 {esc(thai_date(period["start"]))} – {esc(thai_date(period["end"]))}</div>'
+        period_html = f'<div class="period">{esc(thai_date(period["start"]))} – {esc(thai_date(period["end"]))}</div>'
 
     legend_items = "".join(
         f'<span class="pill {meta["class"]}">{esc(meta["label"])}</span>'
         for meta in FORMAT_META.values()
-    )
+    ) + '<span class="pill fmt-cancelled">เลื่อน</span>'
 
     title = f'{course.get("name", "")} ({course.get("code", "")})'
+    homework_html = render_homework(homework, notes)
 
     return f"""<!DOCTYPE html>
 <html lang="th">
@@ -496,17 +421,16 @@ def build_html(data):
       {period_html}
     </header>
 
-    <div class="legend">
-      <span class="legend-title">คำอธิบายสัญลักษณ์:</span>
-      {legend_items}
-    </div>
+    <div class="legend">{legend_items}</div>
 
     <main>
-      {weeks_html}
+      {days_html}
     </main>
 
+    {homework_html}
+
     <footer class="page-footer">
-      สร้างจากไฟล์ schedule.json — ตารางเรียนฉบับนี้ใช้เพื่ออ้างอิงเท่านั้น กรุณาตรวจสอบประกาศทางการอีกครั้ง
+      สร้างจากไฟล์ schedule.md (ฉบับตรวจทานล่าสุด) — ใช้เพื่ออ้างอิงเท่านั้น กรุณาตรวจสอบประกาศทางการอีกครั้ง
     </footer>
   </div>
 </body>
@@ -517,8 +441,13 @@ def build_html(data):
 def main():
     with open("schedule.json", encoding="utf-8") as f:
         data = json.load(f)
+    course = data.get("course", {})
 
-    out = build_html(data)
+    with open("schedule.md", encoding="utf-8") as f:
+        md_text = f.read()
+    sessions, homework, notes = parse_schedule_md(md_text)
+
+    out = build_html(course, sessions, homework, notes)
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(out)
 
