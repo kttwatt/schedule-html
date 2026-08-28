@@ -614,7 +614,7 @@ def build_html(course, sessions, homework, notes):
       สร้างจากไฟล์ schedule.md (ฉบับตรวจทานล่าสุด) — ใช้เพื่ออ้างอิงเท่านั้น กรุณาตรวจสอบประกาศทางการอีกครั้ง
     </footer>
   </div>
-  <button id="fabToday" class="fab-today" type="button" aria-label="ไปยังวันนี้">
+  <button id="fabToday" class="fab-today" type="button" aria-label="วันนี้">
     <span class="fab-icon" aria-hidden="true">📅</span><span>วันนี้</span>
   </button>
   <script>{JS}</script>
