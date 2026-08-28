@@ -733,8 +733,6 @@ def build_html(course, sessions, homework, notes):
       {days_html}
     </main>
 
-    {homework_html}
-
     <footer class="page-footer">
       สร้างจากไฟล์ schedule.md (ฉบับตรวจทานล่าสุด) — ใช้เพื่ออ้างอิงเท่านั้น กรุณาตรวจสอบประกาศทางการอีกครั้ง
     </footer>
