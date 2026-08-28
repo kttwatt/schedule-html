@@ -725,7 +725,7 @@ def build_html(course, sessions, homework, notes):
     </footer>
   </div>
   <button id="fabToday" class="fab-today" type="button" aria-label="วันนี้">
-    <span class="fab-icon" aria-hidden="true">📅</span><span>วันนี้</span>
+    <span>วันนี้</span>
   </button>
   <script>{JS}</script>
 </body>
