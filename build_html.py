@@ -298,9 +298,24 @@ def render_day(day, prev_week):
     rows_html = "\n".join(render_session_row(s) for s in day["sessions"])
     date_attr = f' data-date="{esc(day["date_iso"])}"' if day.get("date_iso") else ""
     return week_html + f"""<section class="day"{date_attr}>
-  <div class="day-head">{esc(day["date_text"])}</div>
+  <div class="day-head">{esc(expand_day_abbrev(day["date_text"]))}</div>
   {rows_html}
 </section>"""
+
+
+DAY_FULL = {
+    "จ.": "วันจันทร์", "อ.": "วันอังคาร", "พ.": "วันพุธ",
+    "พฤ.": "วันพฤหัสบดี", "ศ.": "วันศุกร์", "ส.": "วันเสาร์",
+    "อา.": "วันอาทิตย์",
+}
+DAY_ABBR_RE = re.compile(r"^(จ\.|อ\.|พ\.|พฤ\.|ศ\.|ส\.|อา\.)\s+")
+
+def expand_day_abbrev(date_text):
+    """'จ. 17 ส.ค. 2569' -> 'วันจันทร์ 17 ส.ค. 2569'."""
+    m = DAY_ABBR_RE.match(date_text or "")
+    if not m:
+        return date_text or ""
+    return DAY_FULL[m.group(1)] + " " + date_text[len(m.group(0)):]
 
 
 def render_homework(homework, notes):
