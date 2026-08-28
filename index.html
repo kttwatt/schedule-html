@@ -100,7 +100,6 @@ header.course-header .period { font-size: 1.25rem; font-weight: 600; color: var(
   grid-template-areas:
     "time topic pill"
     ".    who   who"
-    ".    materials materials";
   column-gap: 8px;
   row-gap: 1px;
   align-items: baseline;
@@ -131,28 +130,6 @@ header.course-header .period { font-size: 1.25rem; font-weight: 600; color: var(
 }
 .row .topic { grid-area: topic; min-width: 0; }
 .row .who { grid-area: who; font-size: .88rem; color: var(--muted); min-width: 0; }
-.row .materials {
-  grid-area: materials;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-top: 2px;
-}
-.doc-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  font-size: .78rem;
-  color: var(--primary);
-  background: var(--primary-light);
-  border: 1px solid var(--primary);
-  border-radius: 999px;
-  padding: 1px 8px;
-  text-decoration: none;
-  white-space: nowrap;
-  line-height: 1.6;
-}
-.doc-chip:hover { text-decoration: underline; }
 .row .pill {
   grid-area: pill;
   justify-self: end;
@@ -202,7 +179,6 @@ footer.page-footer {
       "time  time"
       "topic pill"
       "who   who"
-      "materials materials";
     row-gap: 3px;
     column-gap: 6px;
   }
@@ -274,28 +250,28 @@ footer.page-footer {
   <div class="day-head">อ. 18 ส.ค. 2569</div>
   <div class="row"><span class="time">09.00–10.00</span><span class="topic">ปฐมนิเทศวิชา พยคร 627 นโยบายสุขภาพกับภาวะผู้นำ</span><span class="who">ผศ.ดร.เกศศิริ วงษ์คงคำ (หัวหน้าวิชา/ภาควิชาการพยาบาลศัลยศาสตร์)</span><span class="pill fmt-hybrid">Hybrid</span></div>
 <div class="row"><span class="time">10.00–12.00</span><span class="topic"><span class="unit">หน่วย 2</span>แนวคิด หลักการ และกระบวนการพัฒนาภาวะผู้นำทางการพยาบาล / การใช้หลักฐานเชิงประจักษ์ในกระบวนการดูแลอย่างต่อเนื่อง</span><span class="who">ผศ.ดร.เกศศิริ วงษ์คงคำ (หัวหน้าวิชา/ภาควิชาการพยาบาลศัลยศาสตร์)</span><span class="pill fmt-hybrid">Hybrid</span></div>
-<div class="row has-materials"><span class="time">13.00–16.00</span><span class="topic"><span class="unit">หน่วย 1</span>ระบบสุขภาพ นโยบายสุขภาพของประเทศ แผนพัฒนาสุขภาพแห่งชาติ ฉบับปัจจุบัน</span><span class="who">ผศ.ดร.ฐิติพงษ์ ตันคำปวน (รองคณบดีฝ่ายวิจัย) / อ.ดร.สุรัสวดี เครือหงส์ (ภาควิชาการพยาบาลศัลยศาสตร์) / อ.ดร.ชิดชนก เบ็ญจสิริสรรค์ (ภาควิชาการพยาบาลอายุรศาสตร์)</span><span class="pill fmt-hybrid">Hybrid</span><span class="materials"><a class="doc-chip" href="https://github.com/kttwatt/schedule-materials/raw/main/01-orientation-policy/unit1-policy-slides.pdf" target="_blank" rel="noopener">📄 unit1-policy-slides</a><a class="doc-chip" href="https://github.com/kttwatt/schedule-materials/raw/main/01-orientation-policy/unit1-health-policy.pdf" target="_blank" rel="noopener">📄 unit1-health-policy</a><a class="doc-chip" href="https://github.com/kttwatt/schedule-materials/raw/main/05-assignments/rubric-takehome-exam.docx" target="_blank" rel="noopener">📄 rubric-takehome</a></span></div>
+<div class="row"><span class="time">13.00–16.00</span><span class="topic"><span class="unit">หน่วย 1</span>ระบบสุขภาพ นโยบายสุขภาพของประเทศ แผนพัฒนาสุขภาพแห่งชาติ ฉบับปัจจุบัน</span><span class="who">ผศ.ดร.ฐิติพงษ์ ตันคำปวน (รองคณบดีฝ่ายวิจัย) / อ.ดร.สุรัสวดี เครือหงส์ (ภาควิชาการพยาบาลศัลยศาสตร์) / อ.ดร.ชิดชนก เบ็ญจสิริสรรค์ (ภาควิชาการพยาบาลอายุรศาสตร์)</span><span class="pill fmt-hybrid">Hybrid</span></div>
 </section>
 <section class="day" data-date="2026-08-19">
   <div class="day-head">พ. 19 ส.ค. 2569</div>
   <div class="row"><span class="time">08.00–12.00</span><span class="topic"><span class="unit">หน่วย 2</span>ทฤษฎีและแนวคิดเกี่ยวกับผู้นำ: ความหมายและแนวคิดเกี่ยวกับผู้นำ / ทฤษฎีผู้นำ (leadership theories) / พฤติกรรมและกลยุทธ์ของผู้นำทางการพยาบาลในระบบสุขภาพ: ผู้นำกับการพัฒนาองค์กรด้วยระบบประกันคุณภาพและการบริหารความเสี่ยง</span><span class="who">ผศ.ดร.รัตติมา ศิริโหราชัย (หัวหน้าภาควิชาการพยาบาลศัลยศาสตร์)</span><span class="pill fmt-hybrid">Hybrid</span></div>
-<div class="row has-materials"><span class="time">13.00–16.00</span><span class="topic"><span class="unit">หน่วย 2</span>จริยธรรมของผู้นำทางการพยาบาลและกฎหมายวิชาชีพการพยาบาลและการผดุงครรภ์ที่เกี่ยวข้อง</span><span class="who">รศ.ดร.ปรางทิพย์ ฉายพุทธ (เกษียณอายุราชการ)</span><span class="pill fmt-hybrid">Hybrid</span><span class="materials"><a class="doc-chip" href="https://github.com/kttwatt/schedule-materials/raw/main/02-leadership/2026-08-19-ethics-law-prangtip.pdf" target="_blank" rel="noopener">📄 ethics-law</a></span></div>
+<div class="row"><span class="time">13.00–16.00</span><span class="topic"><span class="unit">หน่วย 2</span>จริยธรรมของผู้นำทางการพยาบาลและกฎหมายวิชาชีพการพยาบาลและการผดุงครรภ์ที่เกี่ยวข้อง</span><span class="who">รศ.ดร.ปรางทิพย์ ฉายพุทธ (เกษียณอายุราชการ)</span><span class="pill fmt-hybrid">Hybrid</span></div>
 </section>
 <section class="day" data-date="2026-08-20">
   <div class="day-head">พฤ. 20 ส.ค. 2569</div>
-  <div class="row has-materials"><span class="time">09.00–12.00</span><span class="topic"><span class="unit">หน่วย 1</span>แผนยุทธศาสตร์กำลังคนด้านสุขภาพ และปัญหากำลังคนสาขาพยาบาลศาสตร์</span><span class="who">ผศ.ดร.ฐิติพงษ์ ตันคำปวน (รองคณบดีฝ่ายวิจัย) / อ.ดร.สุรัสวดี เครือหงส์ (ภาควิชาการพยาบาลศัลยศาสตร์) / อ.ดร.ชิดชนก เบ็ญจสิริสรรค์ (ภาควิชาการพยาบาลอายุรศาสตร์)</span><span class="pill fmt-hybrid">Hybrid</span><span class="materials"><a class="doc-chip" href="https://github.com/kttwatt/schedule-materials/raw/main/02-leadership/Lecture_Workforce_August2026.pdf" target="_blank" rel="noopener">📄 Lecture-Workforce</a><a class="doc-chip" href="https://github.com/kttwatt/schedule-materials/raw/main/06-seminars/%E0%B8%81%E0%B8%A5%E0%B8%B8%E0%B9%88%E0%B8%A1%20Policy%2BWorkforce_%E0%B9%80%E0%B8%89%E0%B8%9E%E0%B8%B2%E0%B8%B0%E0%B8%97%E0%B8%B2%E0%B8%87%E0%B8%AA%E0%B8%B2%E0%B8%82%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9E%E0%B8%A2%E0%B8%B2%E0%B8%9A%E0%B8%B2%E0%B8%A5%E0%B8%9B%E0%B8%A3%E0%B8%B4%E0%B8%A8%E0%B8%B1%E0%B8%A5%E0%B8%A2%E0%B8%81%E0%B8%A3%E0%B8%A3%E0%B8%A1%2055%20%E0%B8%811.md" target="_blank" rel="noopener">📄 Policy+Workforce-กลุ่ม</a><a class="doc-chip" href="https://github.com/kttwatt/schedule-materials/raw/main/05-assignments/Workshop_Workforce_August2026.md" target="_blank" rel="noopener">📄 Workshop-Workforce</a></span></div>
-<div class="row has-materials"><span class="time">13.00–17.00</span><span class="topic"><span class="unit">หน่วย 2</span>การพัฒนาสมรรถนะผู้นำ พฤติกรรม กลยุทธ์ของผู้นำทางการพยาบาลในระบบสุขภาพ การสื่อสาร การสร้างและกระบวนการทำงานเป็นทีม</span><span class="who">รศ.ดร.อัจฉริยา พ่วงแก้ว (ภาควิชาการพยาบาลอายุรศาสตร์)</span><span class="pill fmt-hybrid">Hybrid</span><span class="materials"><a class="doc-chip" href="https://github.com/kttwatt/schedule-materials/raw/main/02-leadership/2026-08-20-leadership-autchariya.pdf" target="_blank" rel="noopener">📄 leadership</a><a class="doc-chip" href="https://github.com/kttwatt/schedule-materials/raw/main/02-leadership/2026-08-20-communication-autchariya.pdf" target="_blank" rel="noopener">📄 communication</a></span></div>
+  <div class="row"><span class="time">09.00–12.00</span><span class="topic"><span class="unit">หน่วย 1</span>แผนยุทธศาสตร์กำลังคนด้านสุขภาพ และปัญหากำลังคนสาขาพยาบาลศาสตร์</span><span class="who">ผศ.ดร.ฐิติพงษ์ ตันคำปวน (รองคณบดีฝ่ายวิจัย) / อ.ดร.สุรัสวดี เครือหงส์ (ภาควิชาการพยาบาลศัลยศาสตร์) / อ.ดร.ชิดชนก เบ็ญจสิริสรรค์ (ภาควิชาการพยาบาลอายุรศาสตร์)</span><span class="pill fmt-hybrid">Hybrid</span></div>
+<div class="row"><span class="time">13.00–17.00</span><span class="topic"><span class="unit">หน่วย 2</span>การพัฒนาสมรรถนะผู้นำ พฤติกรรม กลยุทธ์ของผู้นำทางการพยาบาลในระบบสุขภาพ การสื่อสาร การสร้างและกระบวนการทำงานเป็นทีม</span><span class="who">รศ.ดร.อัจฉริยา พ่วงแก้ว (ภาควิชาการพยาบาลอายุรศาสตร์)</span><span class="pill fmt-hybrid">Hybrid</span></div>
 </section>
 <section class="day" data-date="2026-08-21">
   <div class="day-head">ศ. 21 ส.ค. 2569</div>
-  <div class="row has-materials"><span class="time">08.00–12.00</span><span class="topic"><span class="unit">หน่วย 1</span>เศรษฐศาสตร์ระบบสุขภาพและการประเมินความคุ้มค่าของมาตรการทางสุขภาพ / ระบบการเงินการคลังและการเบิกจ่ายในระบบสุขภาพ</span><span class="who">ผศ.พิเชต วงรอต (รองคณบดีฝ่ายบริการวิชาการและขับเคลื่อนนโยบายชี้นำสังคม)</span><span class="pill fmt-hybrid">Hybrid</span><span class="materials"><a class="doc-chip" href="https://github.com/kttwatt/schedule-materials/raw/main/01-orientation-policy/2026-08-21-health-economics-pichet.pdf" target="_blank" rel="noopener">📄 health-economics</a><a class="doc-chip" href="https://github.com/kttwatt/schedule-materials/raw/main/01-orientation-policy/2026-08-21-health-financing-pichet.pdf" target="_blank" rel="noopener">📄 health-financing</a></span></div>
-<div class="row has-materials"><span class="time">13.00–16.00</span><span class="topic">การประเมินภาวะจิตใจ อารมณ์ สังคมและจิตวิญญาณในผู้ป่วยที่ได้รับการผ่าตัด</span><span class="who">อ.ดร.ภาศิษฏา อ่อนดี</span><span class="pill fmt-onsite">508</span><span class="materials"><a class="doc-chip" href="https://github.com/kttwatt/schedule-materials/raw/main/02-leadership/2026-08-21-psycho-social-assessment.pdf" target="_blank" rel="noopener">📄 psycho-social</a></span></div>
+  <div class="row"><span class="time">08.00–12.00</span><span class="topic"><span class="unit">หน่วย 1</span>เศรษฐศาสตร์ระบบสุขภาพและการประเมินความคุ้มค่าของมาตรการทางสุขภาพ / ระบบการเงินการคลังและการเบิกจ่ายในระบบสุขภาพ</span><span class="who">ผศ.พิเชต วงรอต (รองคณบดีฝ่ายบริการวิชาการและขับเคลื่อนนโยบายชี้นำสังคม)</span><span class="pill fmt-hybrid">Hybrid</span></div>
+<div class="row"><span class="time">13.00–16.00</span><span class="topic">การประเมินภาวะจิตใจ อารมณ์ สังคมและจิตวิญญาณในผู้ป่วยที่ได้รับการผ่าตัด</span><span class="who">อ.ดร.ภาศิษฏา อ่อนดี</span><span class="pill fmt-onsite">508</span></div>
 </section>
 <div class="week-div">สัปดาห์ที่ 2</div><section class="day" data-date="2026-08-24">
   <div class="day-head">จ. 24 ส.ค. 2569</div>
   <div class="row"><span class="time">08.00–10.00</span><span class="topic">แนวคิดและหลักการประเมินภาวะสุขภาพ</span><span class="who">ผศ.พรสินี เต็งพานิชกุล</span><span class="pill fmt-onsite">508</span></div>
 <div class="row"><span class="time">10.00–12.00</span><span class="topic">การประเมินร่างกายระบบ: Head, Face, Neck, Skin and Lymphatic System</span><span class="who">ผศ.พรสินี เต็งพานิชกุล</span><span class="pill fmt-onsite">508</span></div>
-<div class="row has-materials"><span class="time">13.00–16.00</span><span class="topic"><span class="unit">หน่วย 3</span>มโนทัศน์ทางการพยาบาลปริศัลยกรรม (Perioperative Nursing Concepts)</span><span class="who">ศ.ดร.อุษาวดี อัศดรวิเศษ</span><span class="pill fmt-onsite">508</span><span class="materials"><a class="doc-chip" href="https://github.com/kttwatt/schedule-materials/raw/main/03-perioperative/2026-08-24-unit3-perioperative-concepts.pdf" target="_blank" rel="noopener">📄 perioperative-concepts</a></span></div>
+<div class="row"><span class="time">13.00–16.00</span><span class="topic"><span class="unit">หน่วย 3</span>มโนทัศน์ทางการพยาบาลปริศัลยกรรม (Perioperative Nursing Concepts)</span><span class="who">ศ.ดร.อุษาวดี อัศดรวิเศษ</span><span class="pill fmt-onsite">508</span></div>
 </section>
 <section class="day" data-date="2026-08-25">
   <div class="day-head">อ. 25 ส.ค. 2569</div>
@@ -306,7 +282,7 @@ footer.page-footer {
 <section class="day" data-date="2026-08-26">
   <div class="day-head">พ. 26 ส.ค. 2569</div>
   <div class="row cancelled"><span class="time">08.00–12.00</span><span class="topic"><span class="unit">หน่วย 3</span>การพัฒนาคุณภาพองค์กรในระบบสุขภาพ/การพัฒนาคุณภาพการรักษาพยาบาลในการพยาบาลปริศัลยกรรม/การประเมินผลลัพธ์ทางการพยาบาลเฉพาะสาขาปริศัลยกรรม ครั้งที่ 2 (เลื่อน 26/08 — อาจารย์ติดตรวจร่างกาย)</span><span class="who">ศ.ดร.อุษาวดี อัศดรวิเศษ</span><span class="pill fmt-cancelled">เลื่อน</span></div>
-<div class="row has-materials"><span class="time">13.00–15.00</span><span class="topic">การรับรองคุณภาพโรงพยาบาลและการรับรองเฉพาะโรค</span><span class="who">พว.วรารัตน์ บุญณสะ (ภาควิชาศัลยศาสตร์ออร์โธปิดิคส์และกายภาพบำบัด)</span><span class="pill fmt-onsite">508</span><span class="materials"><a class="doc-chip" href="https://github.com/kttwatt/schedule-materials/raw/main/03-perioperative/2026-08-26-ha-certification.pdf" target="_blank" rel="noopener">📄 ha-certification</a></span></div>
+<div class="row"><span class="time">13.00–15.00</span><span class="topic">การรับรองคุณภาพโรงพยาบาลและการรับรองเฉพาะโรค</span><span class="who">พว.วรารัตน์ บุญณสะ (ภาควิชาศัลยศาสตร์ออร์โธปิดิคส์และกายภาพบำบัด)</span><span class="pill fmt-onsite">508</span></div>
 <div class="row"><span class="time">15.00–16.00</span><span class="topic">Self-study</span><span class="pill fmt-selfstudy">Self-study</span></div>
 </section>
 <section class="day" data-date="2026-08-27">

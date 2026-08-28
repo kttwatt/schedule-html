@@ -11,6 +11,11 @@ import html
 from datetime import datetime
 from urllib.parse import quote
 
+# Course-materials doc-chip feature (📄 filename links under each session).
+# Parked for now, but parsing/mapping logic stays intact — flip to True to
+# bring back doc-chip rendering + its CSS without touching anything else.
+DOC_CHIPS = False
+
 THAI_MONTHS = [
     "", "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.",
     "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค.",
@@ -277,7 +282,7 @@ def render_session_row(s):
         meta = FORMAT_META[fmt]
         pill_html = f'<span class="pill {meta["class"]}">{esc(pill_label(fmt, s["room"]))}</span>'
 
-    materials_html = render_materials(s.get("materials"))
+    materials_html = render_materials(s.get("materials")) if DOC_CHIPS else ""
     if materials_html:
         classes.append("has-materials")
 
@@ -570,6 +575,37 @@ footer.page-footer {
 .fab-today:active { transform: scale(.94); }
 .fab-today .fab-icon { font-size: 1.15rem; line-height: 1; }
 """
+
+# Doc-chip CSS lives inside the CSS block above (kept intact for easy
+# re-enabling); strip it out at build time while DOC_CHIPS is False.
+_DOC_CHIP_CSS_RULES = """.row .materials {
+  grid-area: materials;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+.doc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: .78rem;
+  color: var(--primary);
+  background: var(--primary-light);
+  border: 1px solid var(--primary);
+  border-radius: 999px;
+  padding: 1px 8px;
+  text-decoration: none;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+.doc-chip:hover { text-decoration: underline; }
+"""
+
+if not DOC_CHIPS:
+    CSS = CSS.replace(_DOC_CHIP_CSS_RULES, "")
+    CSS = CSS.replace('\n    ".    materials materials";', "")
+    CSS = CSS.replace('\n      "materials materials";', "")
 
 JS = """
 (function () {
