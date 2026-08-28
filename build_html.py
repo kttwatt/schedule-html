@@ -9,6 +9,7 @@ import json
 import re
 import html
 from datetime import datetime
+from urllib.parse import quote
 
 THAI_MONTHS = [
     "", "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.",
@@ -28,6 +29,54 @@ LINK_RE = re.compile(r'\[([^\]]+)\]\(([^)]+)\)')
 BOLD_RE = re.compile(r'\*\*([^*]+)\*\*')
 URL_RE = re.compile(r'https?://\S+')
 INLINE_RE = re.compile(f'(?:{LINK_RE.pattern})|(?:{BOLD_RE.pattern})|(?:{URL_RE.pattern})')
+
+MATERIALS_REPO_RAW = "https://github.com/kttwatt/schedule-materials/raw/main"
+
+# schedule.md's เอกสารเรียน column links point at old flat materials/ paths.
+# The actual files now live in kttwatt/schedule-materials, reorganized into
+# category subfolders. Map each old path -> new subfolder/filename.
+MATERIALS_MAP = {
+    "materials/2026-08-19-ethics-law-prangtip.pdf": "02-leadership/2026-08-19-ethics-law-prangtip.pdf",
+    "materials/2026-08-20-leadership-autchariya.pdf": "02-leadership/2026-08-20-leadership-autchariya.pdf",
+    "materials/2026-08-20-communication-autchariya.pdf": "02-leadership/2026-08-20-communication-autchariya.pdf",
+    "materials/2026-08-21-psycho-social-assessment.pdf": "02-leadership/2026-08-21-psycho-social-assessment.pdf",
+    "materials/Lecture_Workforce_August2026.pdf": "02-leadership/Lecture_Workforce_August2026.pdf",
+    "materials/2026-08-21-health-economics-pichet.pdf": "01-orientation-policy/2026-08-21-health-economics-pichet.pdf",
+    "materials/2026-08-21-health-financing-pichet.pdf": "01-orientation-policy/2026-08-21-health-financing-pichet.pdf",
+    "materials/unit1-health-policy.pdf": "01-orientation-policy/unit1-health-policy.pdf",
+    "materials/unit1-policy-slides.pdf": "01-orientation-policy/unit1-policy-slides.pdf",
+    "materials/2026-08-24-unit3-perioperative-concepts.pdf": "03-perioperative/2026-08-24-unit3-perioperative-concepts.pdf",
+    "materials/2026-08-26-ha-certification.pdf": "03-perioperative/2026-08-26-ha-certification.pdf",
+    "materials/rubric-takehome-exam.docx": "05-assignments/rubric-takehome-exam.docx",
+    "materials/Workshop_Workforce_August2026.docx": "05-assignments/Workshop_Workforce_August2026.docx",
+    "materials/Workshop_Workforce_August2026.md": "05-assignments/Workshop_Workforce_August2026.md",
+    "materials/กลุ่ม Policy+Workforce_เฉพาะทางสาขาการพยาบาลปริศัลยกรรม 55 ก1.md":
+        "06-seminars/กลุ่ม Policy+Workforce_เฉพาะทางสาขาการพยาบาลปริศัลยกรรม 55 ก1.md",
+}
+
+
+def materials_link_href(old_path):
+    """Map an old materials/... path (as written in schedule.md) to a raw
+    GitHub URL in the private kttwatt/schedule-materials repo."""
+    new_path = MATERIALS_MAP.get(old_path)
+    if not new_path:
+        return None
+    return f"{MATERIALS_REPO_RAW}/{quote(new_path)}"
+
+
+def render_materials(materials_text):
+    """Render the เอกสารเรียน cell as small doc-link chips."""
+    if not materials_text or materials_text == "-":
+        return ""
+    chips = []
+    for label, path in LINK_RE.findall(materials_text):
+        href = materials_link_href(path)
+        if not href:
+            continue
+        chips.append(f'<a class="doc-chip" href="{esc(href)}" target="_blank" rel="noopener">📄 {esc(label)}</a>')
+    if not chips:
+        return ""
+    return f'<span class="materials">{"".join(chips)}</span>'
 
 
 def esc(s):
@@ -121,6 +170,7 @@ def parse_schedule_md(text):
         if len(cells) < 6:
             continue
         date_text, time_text, unit, topic, lecturer, room = cells[:6]
+        materials = cells[7] if len(cells) > 7 else ""
         if "ไม่มีข้อมูลในเอกสารต้นฉบับ" in topic:
             continue
         cancelled = topic.startswith("❌")
@@ -134,6 +184,7 @@ def parse_schedule_md(text):
             "lecturer": lecturer,
             "room": room,
             "cancelled": cancelled,
+            "materials": materials,
         })
 
     # --- homework table ---
@@ -226,7 +277,11 @@ def render_session_row(s):
         meta = FORMAT_META[fmt]
         pill_html = f'<span class="pill {meta["class"]}">{esc(pill_label(fmt, s["room"]))}</span>'
 
-    return f'<div class="{" ".join(classes)}">{time_html}{topic_html}{who_html}{pill_html}</div>'
+    materials_html = render_materials(s.get("materials"))
+    if materials_html:
+        classes.append("has-materials")
+
+    return f'<div class="{" ".join(classes)}">{time_html}{topic_html}{who_html}{pill_html}{materials_html}</div>'
 
 
 def render_day(day, prev_week):
@@ -362,7 +417,8 @@ header.course-header .period { font-size: 1.25rem; font-weight: 600; color: var(
   grid-template-columns: 6.5em 1fr auto;
   grid-template-areas:
     "time topic pill"
-    ".    who   who";
+    ".    who   who"
+    ".    materials materials";
   column-gap: 8px;
   row-gap: 1px;
   align-items: baseline;
@@ -393,6 +449,28 @@ header.course-header .period { font-size: 1.25rem; font-weight: 600; color: var(
 }
 .row .topic { grid-area: topic; min-width: 0; }
 .row .who { grid-area: who; font-size: .88rem; color: var(--muted); min-width: 0; }
+.row .materials {
+  grid-area: materials;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+.doc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: .78rem;
+  color: var(--primary);
+  background: var(--primary-light);
+  border: 1px solid var(--primary);
+  border-radius: 999px;
+  padding: 1px 8px;
+  text-decoration: none;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+.doc-chip:hover { text-decoration: underline; }
 .row .pill {
   grid-area: pill;
   justify-self: end;
@@ -441,7 +519,8 @@ footer.page-footer {
     grid-template-areas:
       "time  time"
       "topic pill"
-      "who   who";
+      "who   who"
+      "materials materials";
     row-gap: 3px;
     column-gap: 6px;
   }
