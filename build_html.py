@@ -286,7 +286,9 @@ def render_session_row(s):
     if materials_html:
         classes.append("has-materials")
 
-    return f'<div class="{" ".join(classes)}">{time_html}{topic_html}{who_html}{pill_html}{materials_html}</div>'
+    row_main_html = f'<div class="row-main">{time_html}{topic_html}{pill_html}</div>'
+
+    return f'<div class="{" ".join(classes)}">{row_main_html}{who_html}{materials_html}</div>'
 
 
 def render_day(day, prev_week):
@@ -418,23 +420,21 @@ header.course-header .period { font-size: 1.25rem; font-weight: 600; color: var(
 }
 
 .row {
-  display: grid;
-  grid-template-columns: 6.5em 1fr auto;
-  grid-template-areas:
-    "time topic pill"
-    ".    who   who"
-    ".    materials materials";
-  column-gap: 8px;
-  row-gap: 1px;
-  align-items: baseline;
+  display: block;
   padding: 5px 8px;
   border-bottom: 1px solid var(--border);
   font-size: .96rem;
 }
 .row:last-child { border-bottom: none; }
 
+.row-main {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
 .row .time {
-  grid-area: time;
+  flex: 0 0 6.5em;
   font-weight: 600;
   color: var(--primary);
   font-variant-numeric: tabular-nums;
@@ -452,10 +452,9 @@ header.course-header .period { font-size: 1.25rem; font-weight: 600; color: var(
   padding: 1px 4px;
   margin-right: 4px;
 }
-.row .topic { grid-area: topic; min-width: 0; }
-.row .who { grid-area: who; font-size: .88rem; color: var(--muted); min-width: 0; }
+.row .topic { flex: 1 1 auto; min-width: 0; }
+.row .who { display: block; margin-top: 1px; font-size: .88rem; color: var(--muted); min-width: 0; }
 .row .materials {
-  grid-area: materials;
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
@@ -477,9 +476,9 @@ header.course-header .period { font-size: 1.25rem; font-weight: 600; color: var(
 }
 .doc-chip:hover { text-decoration: underline; }
 .row .pill {
-  grid-area: pill;
-  justify-self: end;
-  align-self: start;
+  margin-left: auto;
+  align-self: flex-start;
+  flex: 0 0 auto;
   font-size: .8rem;
   font-weight: 600;
   padding: 2px 7px;
@@ -519,17 +518,13 @@ footer.page-footer {
 
 @media (max-width: 620px) {
   html { font-size: 17px; }
-  .row {
-    grid-template-columns: 1fr auto;
-    grid-template-areas:
-      "time  time"
-      "topic pill"
-      "who   who"
-      "materials materials";
+  .row-main {
+    flex-wrap: wrap;
     row-gap: 3px;
     column-gap: 6px;
   }
   .row .time {
+    flex: 1 0 100%;
     font-size: .85rem;
     font-weight: 600;
     color: var(--muted);
@@ -539,6 +534,7 @@ footer.page-footer {
     overflow: visible;
     text-overflow: clip;
   }
+  .row .topic { flex: 1 1 auto; }
 }
 
 .fab-today {
@@ -579,7 +575,6 @@ footer.page-footer {
 # Doc-chip CSS lives inside the CSS block above (kept intact for easy
 # re-enabling); strip it out at build time while DOC_CHIPS is False.
 _DOC_CHIP_CSS_RULES = """.row .materials {
-  grid-area: materials;
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
