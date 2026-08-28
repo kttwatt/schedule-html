@@ -456,6 +456,40 @@ footer.page-footer {
     text-overflow: clip;
   }
 }
+
+.fab-today {
+  position: fixed;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 46px;
+  min-width: 46px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 999px;
+  background: var(--today);
+  color: #fff;
+  font-family: inherit;
+  font-size: .9rem;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .28);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: opacity .25s ease, transform .25s ease, visibility .25s step-end;
+}
+.fab-today.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: opacity .25s ease, transform .25s ease, visibility .25s step-start;
+}
+.fab-today:active { transform: scale(.94); }
+.fab-today .fab-icon { font-size: 1.15rem; line-height: 1; }
 """
 
 JS = """
@@ -503,6 +537,30 @@ JS = """
   if (target) {
     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+})();
+
+(function () {
+  var fab = document.getElementById('fabToday');
+  if (!fab) return;
+
+  function toggleFab() {
+    if (window.scrollY > 300) {
+      fab.classList.add('show');
+    } else {
+      fab.classList.remove('show');
+    }
+  }
+  window.addEventListener('scroll', toggleFab, { passive: true });
+  toggleFab();
+
+  fab.addEventListener('click', function () {
+    var todayEl = document.querySelector('.day.today');
+    if (todayEl) {
+      todayEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
 })();
 """
 
@@ -556,6 +614,9 @@ def build_html(course, sessions, homework, notes):
       สร้างจากไฟล์ schedule.md (ฉบับตรวจทานล่าสุด) — ใช้เพื่ออ้างอิงเท่านั้น กรุณาตรวจสอบประกาศทางการอีกครั้ง
     </footer>
   </div>
+  <button id="fabToday" class="fab-today" type="button" aria-label="ไปยังวันนี้">
+    <span class="fab-icon" aria-hidden="true">📅</span><span>วันนี้</span>
+  </button>
   <script>{JS}</script>
 </body>
 </html>
