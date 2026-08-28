@@ -291,7 +291,7 @@ CSS = """
   --today-text: #92400e;
 }
 * { box-sizing: border-box; }
-html { font-size: 15px; }
+html { font-size: 18px; }
 body {
   margin: 0;
   background: var(--bg);
@@ -307,23 +307,23 @@ header.course-header {
   border-bottom: 2px solid var(--primary);
   margin-bottom: 10px;
 }
-header.course-header .header-program { font-size: 1.35rem; font-weight: 700; color: var(--text); line-height: 1.35; }
-header.course-header .period { font-size: 1.05rem; font-weight: 600; color: var(--text); margin-top: 6px; }
+header.course-header .header-program { font-size: 1.6rem; font-weight: 700; color: var(--text); line-height: 1.35; }
+header.course-header .period { font-size: 1.25rem; font-weight: 600; color: var(--text); margin-top: 6px; }
 
 .legend {
   display: flex; flex-wrap: wrap; gap: 6px;
-  margin-bottom: 14px; font-size: .72rem;
+  margin-bottom: 14px; font-size: .85rem;
 }
 
 .week-div {
-  font-size: .74rem; font-weight: 700; color: var(--primary);
+  font-size: .88rem; font-weight: 700; color: var(--primary);
   margin: 16px 0 4px; text-transform: uppercase; letter-spacing: .03em;
 }
 .week-div:first-child { margin-top: 0; }
 
 .day { margin-bottom: 4px; }
 .day-head {
-  font-size: .82rem; font-weight: 700;
+  font-size: .96rem; font-weight: 700;
   background: var(--card);
   border-radius: 6px;
   padding: 4px 8px;
@@ -348,7 +348,7 @@ header.course-header .period { font-size: 1.05rem; font-weight: 600; color: var(
 .today-badge {
   display: inline-block;
   margin-left: 6px;
-  font-size: .64rem;
+  font-size: .76rem;
   font-weight: 700;
   color: #fff;
   background: var(--today);
@@ -368,7 +368,7 @@ header.course-header .period { font-size: 1.05rem; font-weight: 600; color: var(
   align-items: baseline;
   padding: 5px 8px;
   border-bottom: 1px solid var(--border);
-  font-size: .82rem;
+  font-size: .96rem;
 }
 .row:last-child { border-bottom: none; }
 
@@ -377,14 +377,14 @@ header.course-header .period { font-size: 1.05rem; font-weight: 600; color: var(
   font-weight: 600;
   color: var(--primary);
   font-variant-numeric: tabular-nums;
-  font-size: .76rem;
+  font-size: .9rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
 }
 .row .unit {
-  font-size: .68rem;
+  font-size: .8rem;
   color: var(--muted);
   background: #eef2f7;
   border-radius: 4px;
@@ -392,12 +392,12 @@ header.course-header .period { font-size: 1.05rem; font-weight: 600; color: var(
   margin-right: 4px;
 }
 .row .topic { grid-area: topic; min-width: 0; }
-.row .who { grid-area: who; font-size: .74rem; color: var(--muted); min-width: 0; }
+.row .who { grid-area: who; font-size: .88rem; color: var(--muted); min-width: 0; }
 .row .pill {
   grid-area: pill;
   justify-self: end;
   align-self: start;
-  font-size: .68rem;
+  font-size: .8rem;
   font-weight: 600;
   padding: 2px 7px;
   border-radius: 999px;
@@ -418,24 +418,24 @@ header.course-header .period { font-size: 1.05rem; font-weight: 600; color: var(
 
 .homework { margin-top: 26px; }
 .homework h2 {
-  font-size: 1rem; border-bottom: 2px solid var(--primary);
+  font-size: 1.18rem; border-bottom: 2px solid var(--primary);
   padding-bottom: 6px; margin: 0 0 10px;
 }
 .hw-table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: .78rem; background: var(--card); }
+table { width: 100%; border-collapse: collapse; font-size: .92rem; background: var(--card); }
 th, td { border: 1px solid var(--border); padding: 6px 8px; text-align: left; vertical-align: top; }
-th { background: var(--primary-light); color: var(--primary); font-size: .74rem; }
+th { background: var(--primary-light); color: var(--primary); font-size: .88rem; }
 table a { color: var(--primary); }
 
-.hw-notes { margin: 10px 0 0; padding-left: 18px; font-size: .74rem; color: var(--muted); }
+.hw-notes { margin: 10px 0 0; padding-left: 18px; font-size: .88rem; color: var(--muted); }
 .hw-notes li { margin-top: 4px; }
 
 footer.page-footer {
-  text-align: center; color: var(--muted); font-size: .72rem; margin-top: 24px;
+  text-align: center; color: var(--muted); font-size: .85rem; margin-top: 24px;
 }
 
 @media (max-width: 620px) {
-  html { font-size: 14px; }
+  html { font-size: 17px; }
   .row {
     grid-template-columns: 1fr auto;
     grid-template-areas:
@@ -446,7 +446,7 @@ footer.page-footer {
     column-gap: 6px;
   }
   .row .time {
-    font-size: .72rem;
+    font-size: .85rem;
     font-weight: 600;
     color: var(--muted);
     padding-bottom: 3px;
