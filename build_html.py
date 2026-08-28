@@ -361,7 +361,7 @@ header.course-header .period { font-size: .76rem; color: var(--muted); margin-to
 
 .row {
   display: grid;
-  grid-template-columns: 5em 1fr auto;
+  grid-template-columns: 6.5em 1fr auto;
   grid-template-areas:
     "time topic pill"
     ".    who   who";
@@ -381,6 +381,9 @@ header.course-header .period { font-size: .76rem; color: var(--muted); margin-to
   font-variant-numeric: tabular-nums;
   font-size: .76rem;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 .row .unit {
   font-size: .68rem;
@@ -433,9 +436,27 @@ footer.page-footer {
   text-align: center; color: var(--muted); font-size: .72rem; margin-top: 24px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 620px) {
   html { font-size: 14px; }
-  .row { grid-template-columns: 4.4em 1fr auto; column-gap: 6px; }
+  .row {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "time  time"
+      "topic pill"
+      "who   who";
+    row-gap: 3px;
+    column-gap: 6px;
+  }
+  .row .time {
+    font-size: .72rem;
+    font-weight: 600;
+    color: var(--muted);
+    padding-bottom: 3px;
+    margin-bottom: 1px;
+    border-bottom: 1px dashed var(--border);
+    overflow: visible;
+    text-overflow: clip;
+  }
 }
 """
 
