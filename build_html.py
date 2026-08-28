@@ -303,14 +303,12 @@ body {
 .container { max-width: 760px; margin: 0 auto; padding: 14px 12px 48px; }
 
 header.course-header {
-  padding: 10px 2px 12px;
+  padding: 14px 2px 16px;
   border-bottom: 2px solid var(--primary);
   margin-bottom: 10px;
 }
-header.course-header .code { font-size: .78rem; color: var(--primary); font-weight: 700; }
-header.course-header h1 { margin: 2px 0 4px; font-size: 1.15rem; line-height: 1.3; }
-header.course-header .program { font-size: .78rem; color: var(--muted); }
-header.course-header .period { font-size: .76rem; color: var(--muted); margin-top: 2px; }
+header.course-header .header-program { font-size: 1.35rem; font-weight: 700; color: var(--text); line-height: 1.35; }
+header.course-header .period { font-size: 1.05rem; font-weight: 600; color: var(--text); margin-top: 6px; }
 
 .legend {
   display: flex; flex-wrap: wrap; gap: 6px;
@@ -542,9 +540,7 @@ def build_html(course, sessions, homework, notes):
 <body>
   <div class="container">
     <header class="course-header">
-      <div class="code">{esc(course.get('code'))}</div>
-      <h1>{esc(course.get('name'))}</h1>
-      <div class="program">{esc(course.get('program'))}</div>
+      <div class="header-program">{esc(course.get('program'))}</div>
       {period_html}
     </header>
 
