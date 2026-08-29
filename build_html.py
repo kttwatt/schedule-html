@@ -331,9 +331,10 @@ def render_session_row(s):
     if materials_html:
         classes.append("has-materials")
 
-    row_main_html = f'<div class="row-main">{time_html}{topic_html}{pill_html}</div>'
+    body_html = f'<div class="row-body"><div class="topic-line">{topic_html}{pill_html}</div>{who_html}{materials_html}</div>'
+    row_main_html = f'<div class="row-main">{time_html}{body_html}</div>'
 
-    return f'<div class="{" ".join(classes)}">{row_main_html}{who_html}{materials_html}</div>'
+    return f'<div class="{" ".join(classes)}">{row_main_html}</div>'
 
 
 def render_day(day, prev_week):
@@ -509,19 +510,18 @@ header.course-header .period { font-size: 1.25rem; font-weight: 600; color: var(
 
 .row-main {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: 8px;
 }
 
 .row .time {
-  flex: 0 0 6.5em;
+  flex: 0 0 7.5em;
+  flex-shrink: 0;
   font-weight: 600;
   color: var(--primary);
   font-variant-numeric: tabular-nums;
   font-size: .9rem;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   min-width: 0;
 }
 .row .unit {
@@ -532,8 +532,20 @@ header.course-header .period { font-size: 1.25rem; font-weight: 600; color: var(
   padding: 1px 4px;
   margin-right: 4px;
 }
+.row-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.topic-line {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
 .row .topic { flex: 1 1 auto; min-width: 0; }
-.row .who { display: block; margin-top: 1px; font-size: .88rem; color: var(--muted); min-width: 0; }
+.row .who { display: block; font-size: .88rem; color: var(--muted); min-width: 0; }
 .row .materials {
   display: flex;
   flex-wrap: wrap;
@@ -599,20 +611,15 @@ footer.page-footer {
 @media (max-width: 620px) {
   html { font-size: 17px; }
   .row-main {
-    flex-wrap: wrap;
-    row-gap: 3px;
-    column-gap: 6px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 3px;
   }
   .row .time {
-    flex: 1 0 100%;
+    flex: 0 0 auto;
     font-size: .85rem;
     font-weight: 600;
     color: var(--muted);
-    padding-bottom: 3px;
-    margin-bottom: 1px;
-    border-bottom: 1px dashed var(--border);
-    overflow: visible;
-    text-overflow: clip;
   }
   .row .topic { flex: 1 1 auto; }
 }
