@@ -483,13 +483,23 @@ def render_grid_session(start_slot, end_slot, row, s, weekday_class):
     topic = s["topic"]
     lecturer = s["lecturer"] if s["lecturer"] and s["lecturer"] != "-" else ""
     room = s["room"] if s["room"] and s["room"] != "-" else ""
+    unit = s["unit"] if s["unit"] and s["unit"] != "-" else ""
+    time_text = s["time"] if s["time"] and s["time"] != "-" else ""
+    fmt = detect_format(topic, s["room"])
+    fmt_label = pill_label(fmt, s["room"])
     title = f"{topic} — {lecturer}" if lecturer else topic
     meta_html = ""
     if lecturer or room:
         room_html = f'<span class="wg-room">{esc(room)}</span>' if room else ""
         meta_html = f'<div class="wg-meta"><span class="wg-lect">{esc(lecturer)}</span>{room_html}</div>'
     style = f"grid-column:{start_slot + 2}/{end_slot + 2}; grid-row:{row}"
-    return (f'<div class="{" ".join(classes)}" style="{style}" title="{esc(title)}">'
+    data_attrs = (
+        f'data-topic="{esc(topic)}" data-lecturer="{esc(lecturer)}" data-room="{esc(room)}" '
+        f'data-time="{esc(time_text)}" data-unit="{esc(unit)}" data-fmt="{esc(fmt)}" '
+        f'data-fmt-class="{esc(FORMAT_META[fmt]["class"])}" data-fmt-label="{esc(fmt_label)}" '
+        f'data-cancelled="{"1" if s["cancelled"] else "0"}"'
+    )
+    return (f'<div class="{" ".join(classes)}" style="{style}" title="{esc(title)}" {data_attrs}>'
             f'<div class="wg-topic">{esc(topic)}</div>{meta_html}</div>')
 
 
@@ -973,6 +983,7 @@ GRID_CSS = """
   overflow: hidden;
   font-size: .74rem;
   line-height: 1.2;
+  cursor: pointer;
 }
 .wg-topic {
   display: -webkit-box;
@@ -999,6 +1010,67 @@ GRID_CSS = """
 @media (max-width: 620px) {
   .wgrid { grid-template-columns: 48px repeat(18, minmax(32px, 1fr)); min-width: 680px; }
   .wg-topic, .wg-meta { font-size: .66rem; }
+}
+
+.wg-modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(15, 23, 42, .55);
+  backdrop-filter: blur(2px);
+  z-index: 60;
+  display: none;
+  align-items: center; justify-content: center;
+  padding: 16px;
+}
+.wg-modal-backdrop.show { display: flex; }
+.wg-modal-card {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, .35);
+  max-width: 420px;
+  width: 100%;
+  padding: 20px 20px 18px;
+  white-space: normal;
+}
+.wg-modal-close {
+  position: absolute; top: 10px; right: 10px;
+  width: 28px; height: 28px;
+  border: none; border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1rem; line-height: 1;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.wg-modal-close:hover { background: var(--primary-light); color: var(--primary); }
+.wg-modal-time {
+  font-size: 1.05rem; font-weight: 700; color: var(--primary);
+  margin: 0 0 8px;
+}
+.wg-modal-topic {
+  font-size: 1.05rem; font-weight: 700;
+  margin: 0 0 10px;
+  line-height: 1.4;
+}
+.wg-modal-topic.wg-modal-cancelled { text-decoration: line-through; color: var(--muted); }
+.wg-modal-pills { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 12px; }
+.wg-modal-pills .pill {
+  font-size: .8rem; font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.wg-modal-row {
+  font-size: .88rem; color: var(--muted);
+  margin: 0 0 4px;
+  display: flex; gap: 6px;
+}
+.wg-modal-row .wg-modal-label { font-weight: 600; color: inherit; min-width: 64px; flex: 0 0 auto; }
+.wg-modal-row .wg-modal-value { color: #1f2937; }
+
+@media (max-width: 480px) {
+  .wg-modal-card { padding: 16px 16px 14px; width: auto; }
 }
 """
 
@@ -1145,6 +1217,83 @@ JS = """
     });
   });
 })();
+
+(function () {
+  var modal = document.getElementById('wgModal');
+  var sessions = Array.prototype.slice.call(document.querySelectorAll('.wg-session'));
+  if (!modal || !sessions.length) return;
+
+  var card = modal.querySelector('.wg-modal-card');
+  var closeBtn = modal.querySelector('.wg-modal-close');
+  var timeEl = modal.querySelector('.wg-modal-time');
+  var topicEl = modal.querySelector('.wg-modal-topic');
+  var pillsEl = modal.querySelector('.wg-modal-pills');
+  var lectRow = modal.querySelector('.wg-modal-row-lecturer');
+  var roomRow = modal.querySelector('.wg-modal-row-room');
+
+  function setText(el, text) {
+    el.textContent = text || '';
+  }
+
+  function openModal(el) {
+    var topic = el.getAttribute('data-topic') || '';
+    var unit = el.getAttribute('data-unit') || '';
+    var lecturer = el.getAttribute('data-lecturer') || '';
+    var room = el.getAttribute('data-room') || '';
+    var time = el.getAttribute('data-time') || '';
+    var fmtClass = el.getAttribute('data-fmt-class') || '';
+    var fmtLabel = el.getAttribute('data-fmt-label') || '';
+    var cancelled = el.getAttribute('data-cancelled') === '1';
+
+    setText(timeEl, time);
+    setText(topicEl, unit ? (unit + ' ' + topic) : topic);
+    topicEl.classList.toggle('wg-modal-cancelled', cancelled);
+
+    pillsEl.textContent = '';
+    if (cancelled) {
+      var cancelPill = document.createElement('span');
+      cancelPill.className = 'pill fmt-cancelled';
+      cancelPill.textContent = 'เลื่อน';
+      pillsEl.appendChild(cancelPill);
+    }
+    if (fmtLabel) {
+      var fmtPill = document.createElement('span');
+      fmtPill.className = 'pill' + (fmtClass ? ' ' + fmtClass : '');
+      fmtPill.textContent = fmtLabel;
+      pillsEl.appendChild(fmtPill);
+    }
+
+    lectRow.style.display = lecturer ? '' : 'none';
+    setText(lectRow.querySelector('.wg-modal-value'), lecturer);
+    roomRow.style.display = room ? '' : 'none';
+    setText(roomRow.querySelector('.wg-modal-value'), room);
+
+    modal.classList.add('show');
+  }
+
+  function closeModal() {
+    modal.classList.remove('show');
+  }
+
+  sessions.forEach(function (el) {
+    el.addEventListener('click', function () {
+      openModal(el);
+    });
+  });
+
+  modal.addEventListener('click', function () {
+    closeModal();
+  });
+  card.addEventListener('click', function (e) {
+    e.stopPropagation();
+  });
+  closeBtn.addEventListener('click', closeModal);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && modal.classList.contains('show')) {
+      closeModal();
+    }
+  });
+})();
 """
 
 
@@ -1210,6 +1359,16 @@ def build_html(course, sessions, homework, notes):
   <button id="fabToday" class="fab-today" type="button" aria-label="วันนี้">
     <span class="fab-icon" aria-hidden="true">👉</span><span id="fabLabel">วันนี้</span>
   </button>
+  <div id="wgModal" class="wg-modal-backdrop">
+    <div class="wg-modal-card" role="dialog" aria-modal="true">
+      <button type="button" class="wg-modal-close" aria-label="ปิด">✕</button>
+      <div class="wg-modal-time"></div>
+      <div class="wg-modal-topic"></div>
+      <div class="wg-modal-pills"></div>
+      <div class="wg-modal-row wg-modal-row-lecturer"><span class="wg-modal-label">อาจารย์</span><span class="wg-modal-value"></span></div>
+      <div class="wg-modal-row wg-modal-row-room"><span class="wg-modal-label">ห้อง</span><span class="wg-modal-value"></span></div>
+    </div>
+  </div>
   <script>{JS}</script>
 </body>
 </html>
