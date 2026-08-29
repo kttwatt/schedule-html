@@ -646,17 +646,21 @@ JS = """
     });
     target = exact || upcoming || days[days.length - 1];
     doHighlight = true;
-  }
 
   if (doHighlight && target) {
+    // label reflects reality: 'วันนี้' only when there's a real session today,
+    // else 'ถัดไป' (next class, e.g. weekend/holiday)
+    var label = exact ? 'วันนี้' : 'ถัดไป';
     target.classList.add('today');
     var head = target.querySelector('.day-head');
     if (head && !head.querySelector('.today-badge')) {
       var badge = document.createElement('span');
       badge.className = 'today-badge';
-      badge.textContent = 'วันนี้';
+      badge.textContent = label;
       head.appendChild(badge);
     }
+    var fabLabel = document.getElementById('fabLabel');
+    if (fabLabel) fabLabel.textContent = label;
   }
 
   if (target) {
@@ -738,7 +742,7 @@ def build_html(course, sessions, homework, notes):
     </footer>
   </div>
   <button id="fabToday" class="fab-today" type="button" aria-label="วันนี้">
-    <span>วันนี้</span>
+    <span id="fabLabel">วันนี้</span>
   </button>
   <script>{JS}</script>
 </body>
