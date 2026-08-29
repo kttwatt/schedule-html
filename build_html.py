@@ -619,7 +619,6 @@ footer.page-footer {
     flex: 0 0 auto;
     font-size: .85rem;
     font-weight: 600;
-    color: var(--muted);
   }
   .row .topic { flex: 1 1 auto; }
 }
