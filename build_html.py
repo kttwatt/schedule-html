@@ -262,6 +262,12 @@ def group_by_day(sessions):
 
 THAI_WEEKDAYS = ["วันจันทร์", "วันอังคาร", "วันพุธ", "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์", "วันอาทิตย์"]
 
+# Official Thai public holidays that fall on non-class days in the term (17 ส.ค. – 4 ธ.ค. 69).
+HOLIDAY_NAMES = {
+    "2026-10-13": "วันนวมินทรมหาราช (คล้ายวันสวรรคต ร.9)",
+    "2026-10-23": "วันปิยมหาราช",
+}
+
 def full_thai_date(iso):
     """'2026-08-29' -> 'วันเสาร์ 29 ส.ค. 2569'."""
     try:
@@ -344,7 +350,8 @@ def render_day(day, prev_week):
     if day.get("sessions"):
         rows_html = "\n".join(render_session_row(s) for s in day["sessions"])
     else:
-        rows_html = '<div class="holiday-row">— วันหยุด —</div>'
+        note = HOLIDAY_NAMES.get(day.get("date_iso")) or "วันหยุด"
+        rows_html = f'<div class="holiday-row">— {esc(note)} —</div>'
     date_attr = f' data-date="{esc(day["date_iso"])}"' if day.get("date_iso") else ""
     head_text = day.get("date_text") or full_thai_date(day.get("date_iso")) or ""
     cls = ' class="day holiday"' if day.get("holiday") else ' class="day"'
