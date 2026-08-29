@@ -376,6 +376,172 @@ def expand_day_abbrev(date_text):
     return DAY_FULL[m.group(1)] + " " + date_text[len(m.group(0)):]
 
 
+TIME_SPAN_RE = re.compile(r"(\d{1,2})[.:](\d{2})\s*[–-]\s*(\d{1,2})[.:](\d{2})")
+
+GRID_START_MIN = 8 * 60
+GRID_END_MIN = 17 * 60
+SLOT_MIN = 30
+SLOT_COUNT = (GRID_END_MIN - GRID_START_MIN) // SLOT_MIN  # 18 half-hour slots, 08:00-17:00
+
+GRID_WEEKDAY_ABBR = ["จ.", "อ.", "พ.", "พฤ.", "ศ."]  # Mon..Fri
+GRID_WEEKDAY_CLASS = ["wg-mon", "wg-tue", "wg-wed", "wg-thu", "wg-fri"]
+
+
+def parse_time_span(time_text):
+    """'09.00–10.00' -> (540, 600) minutes since midnight; None if unparsable."""
+    m = TIME_SPAN_RE.search(time_text or "")
+    if not m:
+        return None
+    h1, m1, h2, m2 = m.groups()
+    start = int(h1) * 60 + int(m1)
+    end = int(h2) * 60 + int(m2)
+    if end <= start:
+        return None
+    return start, end
+
+
+def minutes_to_slot(mins):
+    slot = round((mins - GRID_START_MIN) / SLOT_MIN)
+    return max(0, min(SLOT_COUNT, slot))
+
+
+def build_week_grids(sessions):
+    """Group sessions by week label into per-weekday (Mon-Fri) buckets for the grid view."""
+    order = []
+    by_week = {}
+    for s in sessions:
+        wk = s.get("week")
+        iso = parse_thai_date_text(s.get("date_text"))
+        if not wk or not iso:
+            continue
+        span = parse_time_span(s.get("time"))
+        if not span:
+            continue
+        by_week.setdefault(wk, [])
+        if wk not in order:
+            order.append(wk)
+        by_week[wk].append((iso, span[0], span[1], s))
+
+    grids = []
+    for wk in order:
+        entries = by_week[wk]
+        d0 = datetime.strptime(entries[0][0], "%Y-%m-%d")
+        monday = d0 - timedelta(days=d0.weekday())
+        day_buckets = [[] for _ in range(5)]
+        for iso, start, end, s in entries:
+            d = datetime.strptime(iso, "%Y-%m-%d")
+            idx = (d - monday).days
+            if 0 <= idx < 5:
+                day_buckets[idx].append((start, end, s))
+        days = []
+        for idx in range(5):
+            day_date = monday + timedelta(days=idx)
+            days.append({
+                "idx": idx,
+                "date_iso": day_date.strftime("%Y-%m-%d"),
+                "day_num": day_date.day,
+                "sessions": sorted(day_buckets[idx], key=lambda t: t[0]),
+            })
+        grids.append({"label": wk, "days": days})
+    return grids
+
+
+def assign_lanes(day_sessions):
+    """Greedy interval packing: place (start,end,s) tuples into the fewest
+    overlapping lanes. Returns (list of (lane, start_slot, end_slot, s), lane_count)."""
+    lane_ends = []
+    placed = []
+    for start, end, s in day_sessions:
+        start_slot = minutes_to_slot(start)
+        end_slot = minutes_to_slot(end)
+        if end_slot <= start_slot:
+            continue
+        lane_idx = None
+        for li, lend in enumerate(lane_ends):
+            if start_slot >= lend:
+                lane_idx = li
+                break
+        if lane_idx is None:
+            lane_idx = len(lane_ends)
+            lane_ends.append(end_slot)
+        else:
+            lane_ends[lane_idx] = end_slot
+        placed.append((lane_idx, start_slot, end_slot, s))
+    return placed, max(len(lane_ends), 1)
+
+
+def render_grid_session(start_slot, end_slot, row, s, weekday_class):
+    classes = ["wg-session", weekday_class]
+    if s["cancelled"]:
+        classes.append("wg-cancelled")
+    topic = s["topic"]
+    lecturer = s["lecturer"] if s["lecturer"] and s["lecturer"] != "-" else ""
+    room = s["room"] if s["room"] and s["room"] != "-" else ""
+    title = f"{topic} — {lecturer}" if lecturer else topic
+    meta_html = ""
+    if lecturer or room:
+        room_html = f'<span class="wg-room">{esc(room)}</span>' if room else ""
+        meta_html = f'<div class="wg-meta"><span class="wg-lect">{esc(lecturer)}</span>{room_html}</div>'
+    style = f"grid-column:{start_slot + 2}/{end_slot + 2}; grid-row:{row}"
+    return (f'<div class="{" ".join(classes)}" style="{style}" title="{esc(title)}">'
+            f'<div class="wg-topic">{esc(topic)}</div>{meta_html}</div>')
+
+
+def render_grid_free(start_slot, end_slot, row):
+    if end_slot <= start_slot:
+        return ""
+    style = f"grid-column:{start_slot + 2}/{end_slot + 2}; grid-row:{row}"
+    return f'<div class="wg-free" style="{style}"></div>'
+
+
+def render_week_grid(week_label, days):
+    row = 2  # row 1 = hour header
+    body_parts = []
+    for day in days:
+        weekday_class = GRID_WEEKDAY_CLASS[day["idx"]]
+        abbr = GRID_WEEKDAY_ABBR[day["idx"]]
+        placed, lane_count = assign_lanes(day["sessions"])
+        has_sessions = "1" if placed else "0"
+        row_start = row
+        for lane in range(lane_count):
+            lane_items = sorted((p for p in placed if p[0] == lane), key=lambda p: p[1])
+            cursor = 0
+            for _, start_slot, end_slot, s in lane_items:
+                if start_slot > cursor:
+                    body_parts.append(render_grid_free(cursor, start_slot, row))
+                body_parts.append(render_grid_session(start_slot, end_slot, row, s, weekday_class))
+                cursor = max(cursor, end_slot)
+            if cursor < SLOT_COUNT:
+                body_parts.append(render_grid_free(cursor, SLOT_COUNT, row))
+            row += 1
+        body_parts.append(
+            f'<div class="wg-daylabel {weekday_class}" data-date="{esc(day["date_iso"])}" '
+            f'data-has-class="{has_sessions}" style="grid-column:1; grid-row:{row_start}/{row}">'
+            f'{esc(abbr)} {day["day_num"]}</div>'
+        )
+    header_parts = ['<div class="wg-corner" style="grid-column:1; grid-row:1"></div>']
+    for i in range(9):
+        hour = 8 + i
+        col = 2 + i * 2
+        end_label = '<span class="wg-hour-end">17:00</span>' if i == 8 else ""
+        header_parts.append(
+            f'<div class="wg-hour" style="grid-column:{col}/{col + 2}; grid-row:1">'
+            f'<span>{hour:02d}:00</span>{end_label}</div>'
+        )
+    grid_html = "".join(header_parts) + "".join(body_parts)
+    return f"""<section class="week-grid">
+  <h3 class="week-grid-title">{esc(week_label)}</h3>
+  <div class="grid-scroll">
+    <div class="wgrid">{grid_html}</div>
+  </div>
+</section>"""
+
+
+def build_grid_view(sessions):
+    grids = build_week_grids(sessions)
+    return "\n".join(render_week_grid(g["label"], g["days"]) for g in grids)
+
+
 def render_homework(homework, notes):
     if not homework:
         return ""
@@ -424,6 +590,16 @@ CSS = """
   --today: #166534;
   --today-light: #dcfce7;
   --today-text: #14532d;
+  --grid-mon: #fff3b0;
+  --grid-mon-text: #7a5b00;
+  --grid-tue: #ffd6ea;
+  --grid-tue-text: #97295a;
+  --grid-wed: #d5f5d0;
+  --grid-wed-text: #1f6b2e;
+  --grid-thu: #ffe0c2;
+  --grid-thu-text: #9a4b00;
+  --grid-fri: #cfeeff;
+  --grid-fri-text: #0b5f80;
 }
 * { box-sizing: border-box; }
 html { font-size: 18px; }
@@ -695,6 +871,110 @@ if not DOC_CHIPS:
     CSS = CSS.replace('\n    ".    materials materials";', "")
     CSS = CSS.replace('\n      "materials materials";', "")
 
+GRID_CSS = """
+.view-toggle {
+  display: flex; gap: 6px;
+  margin: 4px 0 14px;
+}
+.view-tab {
+  flex: 1 1 auto;
+  font-family: inherit;
+  font-size: .92rem;
+  font-weight: 600;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--muted);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.view-tab.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.view-panel-hidden { display: none; }
+
+.week-grid { margin-bottom: 22px; }
+.week-grid-title {
+  font-size: .88rem; font-weight: 700; color: var(--primary);
+  margin: 0 0 6px; text-transform: uppercase; letter-spacing: .03em;
+}
+.grid-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+.wgrid {
+  display: grid;
+  grid-template-columns: 56px repeat(18, minmax(38px, 1fr));
+  grid-auto-rows: minmax(40px, auto);
+  background: var(--card);
+  min-width: 780px;
+}
+.wg-corner {
+  position: sticky; left: 0; z-index: 2;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+.wg-hour {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: .68rem; font-weight: 600; color: var(--muted);
+  padding: 3px 4px 3px 5px;
+  border-bottom: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  white-space: nowrap;
+}
+.wg-daylabel {
+  position: sticky; left: 0; z-index: 2;
+  display: flex; align-items: center;
+  font-size: .8rem; font-weight: 700;
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+.wg-daylabel.wg-today { outline: 2px solid var(--today); outline-offset: -2px; }
+.wg-free {
+  background: repeating-linear-gradient(45deg, #eef0f3, #eef0f3 6px, #e6e8ec 6px, #e6e8ec 12px);
+  border-bottom: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+.wg-session {
+  display: flex; flex-direction: column; justify-content: center; gap: 1px;
+  padding: 3px 5px;
+  border-bottom: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  overflow: hidden;
+  font-size: .74rem;
+  line-height: 1.2;
+}
+.wg-topic {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-weight: 600;
+}
+.wg-meta {
+  display: flex; gap: 4px; align-items: baseline;
+  font-size: .68rem; opacity: .85;
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+.wg-room { opacity: .75; }
+.wg-cancelled { opacity: .55; }
+.wg-cancelled .wg-topic { text-decoration: line-through; }
+
+.wg-mon.wg-session, .wg-mon.wg-daylabel { background: var(--grid-mon); color: var(--grid-mon-text); }
+.wg-tue.wg-session, .wg-tue.wg-daylabel { background: var(--grid-tue); color: var(--grid-tue-text); }
+.wg-wed.wg-session, .wg-wed.wg-daylabel { background: var(--grid-wed); color: var(--grid-wed-text); }
+.wg-thu.wg-session, .wg-thu.wg-daylabel { background: var(--grid-thu); color: var(--grid-thu-text); }
+.wg-fri.wg-session, .wg-fri.wg-daylabel { background: var(--grid-fri); color: var(--grid-fri-text); }
+
+@media (max-width: 620px) {
+  .wgrid { grid-template-columns: 48px repeat(18, minmax(32px, 1fr)); min-width: 680px; }
+  .wg-topic, .wg-meta { font-size: .66rem; }
+}
+"""
+
+CSS = CSS + GRID_CSS
+
 JS = """
 (function () {
   var days = Array.prototype.slice.call(document.querySelectorAll('.day[data-date]'));
@@ -772,6 +1052,44 @@ JS = """
     }
   });
 })();
+
+(function () {
+  var cells = Array.prototype.slice.call(document.querySelectorAll('.wg-daylabel[data-date]'));
+  if (!cells.length) return;
+
+  var now = new Date();
+  var todayStr = now.getFullYear() + '-' +
+    String(now.getMonth() + 1).padStart(2, '0') + '-' +
+    String(now.getDate()).padStart(2, '0');
+
+  cells.forEach(function (cell) {
+    if (cell.getAttribute('data-date') === todayStr && cell.getAttribute('data-has-class') === '1') {
+      cell.classList.add('wg-today');
+    }
+  });
+})();
+
+(function () {
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.view-tab'));
+  var gridView = document.getElementById('gridView');
+  var listView = document.getElementById('listView');
+  if (!tabs.length || !gridView || !listView) return;
+
+  tabs.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      tabs.forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      var view = btn.getAttribute('data-view');
+      if (view === 'list') {
+        listView.classList.remove('view-panel-hidden');
+        gridView.classList.add('view-panel-hidden');
+      } else {
+        gridView.classList.remove('view-panel-hidden');
+        listView.classList.add('view-panel-hidden');
+      }
+    });
+  });
+})();
 """
 
 
@@ -784,6 +1102,7 @@ def build_html(course, sessions, homework, notes):
         if d.get("week"):
             prev_week = d["week"]
     days_html = "\n".join(day_blocks)
+    grid_html = build_grid_view(sessions)
 
     period = course.get("period") or {}
     period_html = ""
@@ -813,11 +1132,21 @@ def build_html(course, sessions, homework, notes):
       {period_html}
     </header>
 
+    <div class="view-toggle">
+      <button type="button" class="view-tab active" data-view="grid">ตารางรายสัปดาห์</button>
+      <button type="button" class="view-tab" data-view="list">รายวัน</button>
+    </div>
+
     <div class="legend">{legend_items}</div>
 
-    <main>
-      {days_html}
-    </main>
+    <div id="gridView" class="view-panel">
+      {grid_html}
+    </div>
+    <div id="listView" class="view-panel view-panel-hidden">
+      <main>
+        {days_html}
+      </main>
+    </div>
 
     <footer class="page-footer">
       สร้างจากไฟล์ schedule.md (ฉบับตรวจทานล่าสุด) — ใช้เพื่ออ้างอิงเท่านั้น กรุณาตรวจสอบประกาศทางการอีกครั้ง
