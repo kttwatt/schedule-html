@@ -8,7 +8,7 @@ for course header metadata (code/name/program/period).
 import json
 import re
 import html
-from datetime import datetime
+from datetime import datetime, timedelta
 from urllib.parse import quote
 
 # Course-materials doc-chip feature (📄 filename links under each session).
@@ -260,6 +260,51 @@ def group_by_day(sessions):
     return days
 
 
+THAI_WEEKDAYS = ["วันจันทร์", "วันอังคาร", "วันพุธ", "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์", "วันอาทิตย์"]
+
+def full_thai_date(iso):
+    """'2026-08-29' -> 'วันเสาร์ 29 ส.ค. 2569'."""
+    try:
+        d = datetime.strptime(iso, "%Y-%m-%d")
+    except (ValueError, TypeError):
+        return iso or ""
+    return f"{THAI_WEEKDAYS[d.weekday()]} {d.day} {THAI_MONTHS[d.month]} {d.year + 543}"
+
+
+def with_weekends_holidays(days):
+    """Fill in every calendar day between first and last session as a visible day block,
+    marking days without sessions (weekends / holidays) as 'วันหยุด'."""
+    real = [d for d in days if d.get("date_iso")]
+    if len(real) < 2:
+        return days
+    by_iso = {}
+    for d in real:
+        # merge duplicate iso (shouldn't happen, but be safe): keep sessions combined
+        if d["date_iso"] in by_iso:
+            by_iso[d["date_iso"]]["sessions"].extend(d["sessions"])
+        else:
+            by_iso[d["date_iso"]] = d
+    isos = sorted(by_iso.keys())
+    start = datetime.strptime(isos[0], "%Y-%m-%d")
+    end = datetime.strptime(isos[-1], "%Y-%m-%d")
+    out = []
+    cur = start
+    while cur <= end:
+        iso = cur.strftime("%Y-%m-%d")
+        if iso in by_iso:
+            out.append(by_iso[iso])
+        else:
+            out.append({
+                "date_text": "",
+                "week": "",
+                "date_iso": iso,
+                "sessions": [],
+                "holiday": True,
+            })
+        cur += timedelta(days=1)
+    return out
+
+
 def render_session_row(s):
     fmt = detect_format(s["topic"], s["room"])
     classes = ["row"]
@@ -295,10 +340,15 @@ def render_day(day, prev_week):
     week_html = ""
     if day["week"] and day["week"] != prev_week:
         week_html = f'<div class="week-div">{esc(day["week"])}</div>'
-    rows_html = "\n".join(render_session_row(s) for s in day["sessions"])
+    if day.get("sessions"):
+        rows_html = "\n".join(render_session_row(s) for s in day["sessions"])
+    else:
+        rows_html = '<div class="holiday-row">— วันหยุด —</div>'
     date_attr = f' data-date="{esc(day["date_iso"])}"' if day.get("date_iso") else ""
-    return week_html + f"""<section class="day"{date_attr}>
-  <div class="day-head">{esc(expand_day_abbrev(day["date_text"]))}</div>
+    head_text = day.get("date_text") or full_thai_date(day.get("date_iso")) or ""
+    cls = ' class="day holiday"' if day.get("holiday") else ' class="day"'
+    return week_html + f"""<section{cls}{date_attr}>
+  <div class="day-head">{esc(expand_day_abbrev(head_text))}</div>
   {rows_html}
 </section>"""
 
@@ -399,6 +449,21 @@ header.course-header .period { font-size: 1.25rem; font-weight: 600; color: var(
 .week-div:first-child { margin-top: 0; }
 
 .day { margin-bottom: 4px; }
+.day.holiday .day-head {
+  color: var(--muted);
+  font-weight: 600;
+  background: color-mix(in srgb, var(--card) 55%, transparent);
+  border-style: dashed;
+}
+.holiday-row {
+  padding: 8px 12px;
+  font-size: .85rem;
+  color: var(--muted);
+  text-align: center;
+  background: color-mix(in srgb, var(--card) 35%, transparent);
+  border-radius: 6px;
+  margin-top: 2px;
+}
 .day-head {
   font-size: .96rem; font-weight: 700;
   background: var(--card);
@@ -707,12 +772,13 @@ JS = """
 
 
 def build_html(course, sessions, homework, notes):
-    days = group_by_day(sessions)
+    days = with_weekends_holidays(group_by_day(sessions))
     prev_week = ""
     day_blocks = []
     for d in days:
         day_blocks.append(render_day(d, prev_week))
-        prev_week = d["week"]
+        if d.get("week"):
+            prev_week = d["week"]
     days_html = "\n".join(day_blocks)
 
     period = course.get("period") or {}
