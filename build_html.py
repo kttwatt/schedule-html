@@ -355,8 +355,14 @@ def render_day(day, prev_week):
     date_attr = f' data-date="{esc(day["date_iso"])}"' if day.get("date_iso") else ""
     head_text = day.get("date_text") or full_thai_date(day.get("date_iso")) or ""
     cls = ' class="day holiday"' if day.get("holiday") else ' class="day"'
+    week_link_html = ""
+    if day.get("sessions") and day.get("date_iso"):
+        week_link_html = (
+            f'<button type="button" class="day-week-link" data-date="{esc(day["date_iso"])}">'
+            f"ดูรายสัปดาห์</button>"
+        )
     return week_html + f"""<section{cls}{date_attr}>
-  <div class="day-head">{esc(expand_day_abbrev(head_text))}</div>
+  <div class="day-head"><span class="day-head-text">{esc(expand_day_abbrev(head_text))}</span>{week_link_html}</div>
   {rows_html}
 </section>"""
 
@@ -649,6 +655,7 @@ header.course-header .period { font-size: 1.25rem; font-weight: 600; color: var(
   margin-top: 2px;
 }
 .day-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
   font-size: .96rem; font-weight: 700;
   background: var(--card);
   border-radius: 6px;
@@ -657,6 +664,20 @@ header.course-header .period { font-size: 1.25rem; font-weight: 600; color: var(
   position: sticky; top: 0;
   border: 1px solid var(--border);
 }
+.day-week-link {
+  flex: 0 0 auto;
+  font-family: inherit;
+  font-size: .72rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--primary);
+  border: none;
+  border-radius: 999px;
+  padding: 4px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.day-week-link:hover { opacity: .88; }
 
 .day.today {
   border-left: 3px solid var(--today);
@@ -931,6 +952,14 @@ GRID_CSS = """
   border-right: 1px solid var(--border);
 }
 .wg-daylabel.wg-today { outline: 2px solid var(--today); outline-offset: -2px; }
+.wg-link-flash {
+  outline: 2px solid var(--today); outline-offset: -2px;
+  animation: wg-link-pulse 1.5s ease-out;
+}
+@keyframes wg-link-pulse {
+  0% { background-color: #fff3a0; }
+  100% { background-color: transparent; }
+}
 .wg-free {
   background: repeating-linear-gradient(45deg, #eef0f3, #eef0f3 6px, #e6e8ec 6px, #e6e8ec 12px);
   border-bottom: 1px solid var(--border);
@@ -1011,7 +1040,7 @@ JS = """
     // else 'ถัดไป' (next class, e.g. weekend/holiday)
     var label = exact ? 'วันนี้' : 'ถัดไป';
     target.classList.add('today');
-    var head = target.querySelector('.day-head');
+    var head = target.querySelector('.day-head-text') || target.querySelector('.day-head');
     if (head && !head.querySelector('.today-badge')) {
       var badge = document.createElement('span');
       badge.className = 'today-badge';
@@ -1090,6 +1119,32 @@ JS = """
     });
   });
 })();
+
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.day-week-link'));
+  if (!links.length) return;
+
+  var dateIndex = {};
+  Array.prototype.slice.call(document.querySelectorAll('.wg-daylabel[data-date]')).forEach(function (cell) {
+    dateIndex[cell.getAttribute('data-date')] = cell;
+  });
+
+  links.forEach(function (link) {
+    link.addEventListener('click', function () {
+      var gridTab = document.querySelector('.view-tab[data-view="grid"]');
+      if (gridTab) gridTab.click();
+
+      var cell = dateIndex[link.getAttribute('data-date')];
+      if (!cell) return;
+      var section = cell.closest('.week-grid') || cell;
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      cell.classList.add('wg-link-flash');
+      setTimeout(function () {
+        cell.classList.remove('wg-link-flash');
+      }, 1500);
+    });
+  });
+})();
 """
 
 
@@ -1133,16 +1188,16 @@ def build_html(course, sessions, homework, notes):
     </header>
 
     <div class="view-toggle">
-      <button type="button" class="view-tab active" data-view="grid">ตารางรายสัปดาห์</button>
-      <button type="button" class="view-tab" data-view="list">รายวัน</button>
+      <button type="button" class="view-tab active" data-view="list">รายวัน</button>
+      <button type="button" class="view-tab" data-view="grid">ตารางรายสัปดาห์</button>
     </div>
 
     <div class="legend">{legend_items}</div>
 
-    <div id="gridView" class="view-panel">
+    <div id="gridView" class="view-panel view-panel-hidden">
       {grid_html}
     </div>
-    <div id="listView" class="view-panel view-panel-hidden">
+    <div id="listView" class="view-panel">
       <main>
         {days_html}
       </main>
