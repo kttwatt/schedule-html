@@ -718,6 +718,7 @@ JS = """
     });
     target = exact || upcoming || days[days.length - 1];
     doHighlight = true;
+  }
 
   if (doHighlight && target) {
     // label reflects reality: 'วันนี้' only when there's a real session today,
