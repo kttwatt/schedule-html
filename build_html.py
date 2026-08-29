@@ -687,13 +687,6 @@ JS = """
   var days = Array.prototype.slice.call(document.querySelectorAll('.day[data-date]'));
   if (!days.length) return;
 
-  var TH_MON = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-  function fmtFabDate(iso) {
-    // '2026-08-31' -> '31 ส.ค.'
-    var p = iso.split('-');
-    return (parseInt(p[2], 10)) + ' ' + (TH_MON[parseInt(p[1], 10) - 1] || '');
-  }
-
   var now = new Date();
   var todayStr = now.getFullYear() + '-' +
     String(now.getMonth() + 1).padStart(2, '0') + '-' +
@@ -734,10 +727,7 @@ JS = """
     }
     var fabLabel = document.getElementById('fabLabel');
     if (fabLabel) {
-      // button shows the actual date it jumps to (e.g. '31 ส.ค.')
-      var dd = target.getAttribute('data-date');
-      var dateText = dd ? fmtFabDate(dd) : label;
-      fabLabel.textContent = dateText;
+      fabLabel.textContent = 'วันนี้';
     }
   }
 
