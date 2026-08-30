@@ -976,7 +976,7 @@ GRID_CSS = """
   border-left: 1px solid var(--border);
 }
 .wg-session {
-  display: flex; flex-direction: column; justify-content: center; gap: 1px;
+  display: block;
   padding: 3px 5px;
   border-bottom: 1px solid var(--border);
   border-left: 1px solid var(--border);
@@ -994,6 +994,7 @@ GRID_CSS = """
 }
 .wg-meta {
   display: flex; gap: 4px; align-items: baseline;
+  margin-top: 1px;
   font-size: .68rem; opacity: .85;
   overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
 }
@@ -1229,12 +1230,15 @@ JS = """
       tabs.forEach(function (b) { b.classList.remove('active'); });
       btn.classList.add('active');
       var view = btn.getAttribute('data-view');
+      var fabLabel = document.getElementById('fabLabel');
       if (view === 'list') {
         listView.classList.remove('view-panel-hidden');
         gridView.classList.add('view-panel-hidden');
+        if (fabLabel) fabLabel.textContent = 'วันนี้';
       } else {
         gridView.classList.remove('view-panel-hidden');
         listView.classList.add('view-panel-hidden');
+        if (fabLabel) fabLabel.textContent = 'สัปดาห์นี้';
       }
     });
   });
