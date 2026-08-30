@@ -431,17 +431,38 @@ def build_week_grids(sessions):
     grids = []
     for wk in order:
         entries = by_week[wk]
-        d0 = datetime.strptime(entries[0][0], "%Y-%m-%d")
-        monday = d0 - timedelta(days=d0.weekday())
+        # Each "สัปดาห์ที่ X" label may span TWO calendar weeks because the
+        # schedule's weeks are staggered (Friday of the prior calendar week +
+        # Mon-Thu of the next). Bucket by *actual weekday* (Mon=0..Fri=4)
+        # instead of a single computed Monday; otherwise sessions whose date
+        # falls outside the first session's Mon-Fri window get silently dropped.
         day_buckets = [[] for _ in range(5)]
+        day_dates = [None] * 5
         for iso, start, end, s in entries:
             d = datetime.strptime(iso, "%Y-%m-%d")
-            idx = (d - monday).days
-            if 0 <= idx < 5:
-                day_buckets[idx].append((start, end, s))
+            idx = d.weekday()  # 0=Mon .. 4=Fri
+            day_buckets[idx].append((start, end, s))
+            day_dates[idx] = iso
         days = []
+        # A label's leading Friday belongs to the prior calendar week while its
+        # Mon-Thu belong to the next. Anchor empty/derivative daylabels on the
+        # calendar Monday that holds the label's *majority* of weekday sessions
+        # (the Mon-Thu cluster), so empty columns show the correct date.
+        cal_mondays = []
+        for iso in day_dates:
+            if not iso:
+                continue
+            d = datetime.strptime(iso, "%Y-%m-%d")
+            cal_mondays.append((d - timedelta(days=d.weekday())).strftime("%Y-%m-%d"))
+        anchor_iso = max(cal_mondays, key=cal_mondays.count)  # most common
+        anchor = datetime.strptime(anchor_iso, "%Y-%m-%d")
         for idx in range(5):
-            day_date = monday + timedelta(days=idx)
+            if day_dates[idx]:
+                day_date = datetime.strptime(day_dates[idx], "%Y-%m-%d")
+            else:
+                # empty weekday: fill from the anchor week so daylabel order
+                # (Mon..Fri) is contiguous and the date is correct
+                day_date = anchor + timedelta(days=idx)
             days.append({
                 "idx": idx,
                 "date_iso": day_date.strftime("%Y-%m-%d"),
