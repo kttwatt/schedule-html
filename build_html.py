@@ -469,6 +469,7 @@ def build_week_grids(sessions):
                 "day_num": day_date.day,
                 "sessions": sorted(day_buckets[idx], key=lambda t: t[0]),
             })
+        days.sort(key=lambda d: d["date_iso"])
         grids.append({"label": wk, "days": days})
     return grids
 
