@@ -1145,11 +1145,59 @@ JS = """
   toggleFab();
 
   fab.addEventListener('click', function () {
-    var todayEl = document.querySelector('.day.today');
-    if (todayEl) {
-      todayEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    var gridPanel = document.getElementById('gridView');
+    var gridActive = gridPanel && !gridPanel.classList.contains('view-panel-hidden');
+    var todayStr = (function () {
+      var n = new Date();
+      return n.getFullYear() + '-' +
+        String(n.getMonth() + 1).padStart(2, '0') + '-' +
+        String(n.getDate()).padStart(2, '0');
+    })();
+    if (gridActive) {
+      // weekly/grid view: scroll to the week-grid whose Monday matches this week's Monday,
+      // so it also works when today is a weekend/holiday (no cell exists for those days).
+      var weekGrids = Array.prototype.slice.call(document.querySelectorAll('.week-grid'));
+      var targetWeek = null;
+      var mondayOfToday = (function () {
+        var now = new Date();
+        var d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // back to Monday (getDay: Sun=0..Sat=6)
+        return d.getFullYear() + '-' +
+          String(d.getMonth() + 1).padStart(2, '0') + '-' +
+          String(d.getDate()).padStart(2, '0');
+      })();
+      weekGrids.forEach(function (wg) {
+        if (targetWeek) return;
+        var first = wg.querySelector('.wg-daylabel[data-date]');
+        if (first && first.getAttribute('data-date') === mondayOfToday) targetWeek = wg;
+      });
+      // fallback: week whose span contains today
+      if (!targetWeek) {
+        weekGrids.forEach(function (wg) {
+          if (targetWeek) return;
+          var dates = Array.prototype.slice.call(wg.querySelectorAll('.wg-daylabel[data-date]'))
+            .map(function (c) { return c.getAttribute('data-date'); })
+            .filter(Boolean).sort();
+          if (dates.length && todayStr >= dates[0] && todayStr <= dates[dates.length - 1]) targetWeek = wg;
+        });
+      }
+      if (targetWeek) {
+        targetWeek.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        var c = targetWeek.querySelector('.wg-daylabel[data-date="' + todayStr + '"]');
+        if (c) {
+          c.classList.add('wg-link-flash');
+          setTimeout(function () { c.classList.remove('wg-link-flash'); }, 1500);
+        }
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      var todayEl = document.querySelector('.day.today');
+      if (todayEl) {
+        todayEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
   });
 })();
