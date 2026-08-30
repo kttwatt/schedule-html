@@ -655,6 +655,10 @@ header.course-header {
   border-bottom: 2px solid var(--primary);
   margin-bottom: 10px;
 }
+header.course-header .header-brand {
+  font-size: 1.05rem; font-weight: 800; color: var(--primary);
+  letter-spacing: .02em; text-transform: uppercase; margin-bottom: 4px;
+}
 header.course-header .header-program { font-size: 1.6rem; font-weight: 700; color: var(--text); line-height: 1.35; }
 header.course-header .period { font-size: 1.25rem; font-weight: 600; color: var(--text); margin-top: 6px; }
 
@@ -1428,7 +1432,7 @@ def build_html(course, sessions, homework, notes):
         for meta in FORMAT_META.values()
     ) + '<span class="pill fmt-cancelled">เลื่อน</span>'
 
-    title = f'{course.get("name", "")} ({course.get("code", "")})'
+    title = "Periop-mu55-schedule"
     homework_html = render_homework(homework, notes)
 
     return f"""<!DOCTYPE html>
@@ -1442,6 +1446,7 @@ def build_html(course, sessions, homework, notes):
 <body>
   <div class="container">
     <header class="course-header">
+      <div class="header-brand">Periop-mu55-schedule</div>
       <div class="header-program">{esc(course.get('program'))}</div>
       {period_html}
     </header>
