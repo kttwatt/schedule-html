@@ -163,6 +163,7 @@
 | อ. 20 ต.ค. 2569 | 08.00–16.00 | - | Clinical practice | - | Clinical practice | - | - |
 | พ. 21 ต.ค. 2569 | 08.00–16.00 | - | Clinical practice | - | Clinical practice | - | - |
 | พฤ. 22 ต.ค. 2569 | 08.00–16.00 | - | Clinical practice | - | Clinical practice | - | - |
+| ศ. 23 ต.ค. 2569 | - | - | 🛑 วันหยุด: วันปิยมหาราช | - | - | - | - |
 | **สัปดาห์ที่ 11** | | | | | | | |
 | จ. 26 ต.ค. 2569 | 08.00–16.00 | - | Clinical practice | - | Clinical practice | - | - |
 | อ. 27 ต.ค. 2569 | 08.00–16.00 | - | Clinical practice | - | Clinical practice | - | - |
