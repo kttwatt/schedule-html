@@ -412,65 +412,42 @@ def minutes_to_slot(mins):
 
 
 def build_week_grids(sessions):
-    """Group sessions by week label into per-weekday (Mon-Fri) buckets for the grid view."""
-    order = []
-    by_week = {}
+    """Group sessions by real calendar week (Mon-Fri) into per-weekday buckets
+    for the grid view. The source data's "สัปดาห์ที่ X" label is staggered
+    (Friday of the prior calendar week + Mon-Thu of the next), which doesn't
+    match a real Mon-Fri week, so we ignore it for grouping and instead key
+    each session on its own calendar Monday."""
+    by_monday = {}
     for s in sessions:
-        wk = s.get("week")
         iso = parse_thai_date_text(s.get("date_text"))
-        if not wk or not iso:
+        if not iso:
             continue
         span = parse_time_span(s.get("time"))
         if not span:
             continue
-        by_week.setdefault(wk, [])
-        if wk not in order:
-            order.append(wk)
-        by_week[wk].append((iso, span[0], span[1], s))
+        d = datetime.strptime(iso, "%Y-%m-%d")
+        monday_iso = (d - timedelta(days=d.weekday())).strftime("%Y-%m-%d")
+        by_monday.setdefault(monday_iso, []).append((iso, span[0], span[1], s))
 
     grids = []
-    for wk in order:
-        entries = by_week[wk]
-        # Each "สัปดาห์ที่ X" label may span TWO calendar weeks because the
-        # schedule's weeks are staggered (Friday of the prior calendar week +
-        # Mon-Thu of the next). Bucket by *actual weekday* (Mon=0..Fri=4)
-        # instead of a single computed Monday; otherwise sessions whose date
-        # falls outside the first session's Mon-Fri window get silently dropped.
+    for n, monday_iso in enumerate(sorted(by_monday.keys()), start=1):
+        entries = by_monday[monday_iso]
+        anchor = datetime.strptime(monday_iso, "%Y-%m-%d")
         day_buckets = [[] for _ in range(5)]
-        day_dates = [None] * 5
         for iso, start, end, s in entries:
             d = datetime.strptime(iso, "%Y-%m-%d")
             idx = d.weekday()  # 0=Mon .. 4=Fri
             day_buckets[idx].append((start, end, s))
-            day_dates[idx] = iso
         days = []
-        # A label's leading Friday belongs to the prior calendar week while its
-        # Mon-Thu belong to the next. Anchor empty/derivative daylabels on the
-        # calendar Monday that holds the label's *majority* of weekday sessions
-        # (the Mon-Thu cluster), so empty columns show the correct date.
-        cal_mondays = []
-        for iso in day_dates:
-            if not iso:
-                continue
-            d = datetime.strptime(iso, "%Y-%m-%d")
-            cal_mondays.append((d - timedelta(days=d.weekday())).strftime("%Y-%m-%d"))
-        anchor_iso = max(cal_mondays, key=cal_mondays.count)  # most common
-        anchor = datetime.strptime(anchor_iso, "%Y-%m-%d")
         for idx in range(5):
-            if day_dates[idx]:
-                day_date = datetime.strptime(day_dates[idx], "%Y-%m-%d")
-            else:
-                # empty weekday: fill from the anchor week so daylabel order
-                # (Mon..Fri) is contiguous and the date is correct
-                day_date = anchor + timedelta(days=idx)
+            day_date = anchor + timedelta(days=idx)
             days.append({
                 "idx": idx,
                 "date_iso": day_date.strftime("%Y-%m-%d"),
                 "day_num": day_date.day,
                 "sessions": sorted(day_buckets[idx], key=lambda t: t[0]),
             })
-        days.sort(key=lambda d: d["date_iso"])
-        grids.append({"label": wk, "days": days})
+        grids.append({"label": f"สัปดาห์ที่ {n}", "days": days})
     return grids
 
 
