@@ -56,6 +56,7 @@
 | พฤ. 3 ก.ย. 2569 | 08.00–09.00 | - | Role of Perioperative Nurse in Organ Transplantation (Donor Phase) | พว.กมลทิพย์ สกุลกันบัณฑิต (งานการพยาบาลผ่าตัด) | 508 | - | - |
 | พฤ. 3 ก.ย. 2569 | 09.00–10.00 | - | Role of Perioperative Nurse in Organ Transplantation (Recipient Phase) | พว.กมลทิพย์ สกุลกันบัณฑิต (งานการพยาบาลผ่าตัด) | 508 | - | - |
 | พฤ. 3 ก.ย. 2569 | 10.00–11.00 | - | Role of Transplant Coordinator Nurse in Organ Donation | พว.พีรา ปานพรม (งานเปลี่ยนอวัยวะศิริราช) | 508 | - | - |
+| พฤ. 3 ก.ย. 2569 | 11.00–12.00 | - | Self-study | - | - | - | - |
 | พฤ. 3 ก.ย. 2569 | 14.00–16.00 | - | Anatomy, physiology and surgery in Upper Extremity | ผศ.นพ.ปณัย เลาหประสิทธิพร (ภาควิชาศัลยศาสตร์ออร์โธปิดิคส์) | 508 | - | - |
 | **สัปดาห์ที่ 4** | | | | | | | |
 | ศ. 4 ก.ย. 2569 | 08.00–10.00 | - | Anatomy, physiology and surgery in Lower Extremity | รศ.นพ.ทศหาญ รุ่งโรจน์ (ภาควิชาศัลยศาสตร์ออร์โธปิดิคส์) | 508 | - | - |
