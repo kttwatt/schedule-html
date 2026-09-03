@@ -88,6 +88,11 @@ def esc(s):
     return html.escape(s or "", quote=True)
 
 
+def sdel(text):
+    """Convert markdown ~~strikethrough~~ to <s> in already-escaped text."""
+    return re.sub(r"~~([^~]*?)~~", r"<s>\1</s>", text)
+
+
 def render_inline(text):
     """Minimal markdown -> HTML: [text](url), **bold**, bare URLs."""
     if not text:
@@ -105,7 +110,7 @@ def render_inline(text):
             out.append(f'<a href="{esc(url)}">{esc(url)}</a>')
         pos = m.end()
     out.append(esc(text[pos:]))
-    return "".join(out)
+    return re.sub(r"~~([^~]*?)~~", r"<s>\1</s>", "".join(out))
 
 
 def thai_date(iso_date):
@@ -323,7 +328,7 @@ def render_session_row(s):
     if s["unit"] and s["unit"] != "-":
         unit_html = f'<span class="unit">{esc(s["unit"])}</span>'
 
-    topic_html = f'<span class="topic">{unit_html}{esc(s["topic"])}</span>'
+    topic_html = f'<span class="topic">{unit_html}{sdel(esc(s["topic"]))}</span>'
 
     who_html = f'<span class="who">{esc(s["lecturer"])}</span>' if s["lecturer"] and s["lecturer"] != "-" else ""
 
